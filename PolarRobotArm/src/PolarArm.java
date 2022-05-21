@@ -95,7 +95,7 @@ public class PolarArm extends JFrame{
         trawka.setBoundaryModeT(Texture.WRAP);
 
 
-        loader = new TextureLoader("obrazki/metal.jpg",this);
+        loader = new TextureLoader("obrazki/black.jpg",this);
         image = loader.getImage();
 
         Texture2D murek = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -240,18 +240,42 @@ public class PolarArm extends JFrame{
         Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
         Transform3D przesuniecie_ram = new Transform3D();
         przesuniecie_ram.setTranslation(new Vector3f(0.0f, podstawa_wys + wys_seg1 + wys_seg2 + promien_kola/2, 0.0f));
-        TransformGroup ramie = new TransformGroup(przesuniecie_ram);
+        TransformGroup ramie_p1 = new TransformGroup(przesuniecie_ram);
         
         //Appearance wyglad_ram = new Appearance();
         //Texture tekstura_muru = new TextureLoader("obrazki/murek.gif", this).getTexture();
         //wyglad_muru.setTexture(tekstura_muru);
  
  
-        ramie.addChild(ramie1);
+        ramie_p1.addChild(ramie1);
         
-        wezel_scena.addChild(ramie);
-
-
+        wezel_scena.addChild(ramie_p1);
+        
+        Appearance wyglad_alum = new Appearance();
+        Texture tekstura_alum = new TextureLoader("obrazki/alum.jpg", this).getTexture();
+        wyglad_alum.setTexture(tekstura_alum);
+        
+        TransformGroup wieza_p5 = new TransformGroup();
+        Transform3D przesuniecie_wiezy5 = new Transform3D();
+        przesuniecie_wiezy5.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2+0.05f,0.0f));
+        przesuniecie_wiezy5.mul(tmp_rot);
+        wieza_p5.setTransform(przesuniecie_wiezy5);
+        Cylinder walec5 = new Cylinder(0.1f,podstawa_szer+0.02f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        wieza_p5.addChild(walec5);
+        wezel_scena.addChild(wieza_p5);
+        
+        
+        
+        TransformGroup ramie_p2 = new TransformGroup();
+        Transform3D przesuniecie_ramie2 = new Transform3D();
+        przesuniecie_ramie2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2+promien_kola/2,0.2f));
+        Transform3D  tmp_rot2 = new Transform3D();
+        tmp_rot2.rotX(Math.PI/2);
+        przesuniecie_ramie2.mul(tmp_rot2);
+        ramie_p2.setTransform(przesuniecie_ramie2);
+        Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        ramie_p2.addChild(ramie2);
+        wezel_scena.addChild(ramie_p2);
 
 
         return wezel_scena;
