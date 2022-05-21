@@ -67,6 +67,20 @@ public class PolarArm extends JFrame{
 
         
         BranchGroup wezel_scena = new BranchGroup();
+        
+        TransformGroup obrot_animacja = new TransformGroup();
+        obrot_animacja.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        wezel_scena.addChild(obrot_animacja);
+      
+
+        Alpha alpha_animacja = new Alpha(-1,5000);
+      //Alpha alpha_animacja2 = new Alpha(-1,Alpha.DECREASING_ENABLE,0,0,0,0,0,5000,0,0);
+
+        RotationInterpolator obracacz = new RotationInterpolator(alpha_animacja, obrot_animacja);
+
+        BoundingSphere bounds = new BoundingSphere();
+        obracacz.setSchedulingBounds(bounds);
+        obrot_animacja.addChild(obracacz);
 
         Appearance wyglad_ziemia = new Appearance();
         Appearance wyglad_mury   = new Appearance();
@@ -106,7 +120,7 @@ public class PolarArm extends JFrame{
 
         
 
-        BoundingSphere bounds = new BoundingSphere();
+        //BoundingSphere bounds = new BoundingSphere();
         AmbientLight lightA = new AmbientLight();
         lightA.setInfluencingBounds(bounds);
         wezel_scena.addChild(lightA);
@@ -213,13 +227,13 @@ public class PolarArm extends JFrame{
 
         Cylinder walec2 = new Cylinder(podstawa_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         wieza_p2.addChild(walec2);
-        wezel_scena.addChild(wieza_p2);
+        obrot_animacja.addChild(wieza_p2);
         
         float gr_kola = 0.05f;
         float promien_kola = 0.15f;
         TransformGroup wieza_p3 = new TransformGroup();
         Transform3D przesuniecie_wiezy3 = new Transform3D();
-        przesuniecie_wiezy3.set(new Vector3f(podstawa_szer/2-0.02f,podstawa_wys + wys_seg1 + wys_seg2+0.05f,0.0f));
+        przesuniecie_wiezy3.set(new Vector3f(podstawa_szer/2-0.02f,wys_seg2/2+promien_kola/2,0.0f));
         Transform3D  tmp_rot      = new Transform3D();
         tmp_rot.rotZ(Math.PI/2);
         przesuniecie_wiezy3.mul(tmp_rot);
@@ -227,19 +241,19 @@ public class PolarArm extends JFrame{
 
         Cylinder walec3 = new Cylinder(promien_kola,gr_kola,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         wieza_p3.addChild(walec3);
-        wezel_scena.addChild(wieza_p3);
+        wieza_p2.addChild(wieza_p3);
         TransformGroup wieza_p4 = new TransformGroup();
         Transform3D przesuniecie_wiezy4 = new Transform3D();
-        przesuniecie_wiezy4.set(new Vector3f(-podstawa_szer/2+0.02f,podstawa_wys + wys_seg1 + wys_seg2+0.05f,0.0f));
+        przesuniecie_wiezy4.set(new Vector3f(-podstawa_szer/2+0.02f,wys_seg2/2+promien_kola/2,0.0f));
         przesuniecie_wiezy4.mul(tmp_rot);
         wieza_p4.setTransform(przesuniecie_wiezy4);
         Cylinder walec4 = new Cylinder(promien_kola,gr_kola,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         wieza_p4.addChild(walec4);
-        wezel_scena.addChild(wieza_p4);
+        wieza_p2.addChild(wieza_p4);
         
         Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
         Transform3D przesuniecie_ram = new Transform3D();
-        przesuniecie_ram.setTranslation(new Vector3f(0.0f, podstawa_wys + wys_seg1 + wys_seg2 + promien_kola/2, 0.0f));
+        przesuniecie_ram.setTranslation(new Vector3f(0.0f, wys_seg2/2+promien_kola/2, 0.0f));
         TransformGroup ramie_p1 = new TransformGroup(przesuniecie_ram);
         
         //Appearance wyglad_ram = new Appearance();
@@ -249,7 +263,7 @@ public class PolarArm extends JFrame{
  
         ramie_p1.addChild(ramie1);
         
-        wezel_scena.addChild(ramie_p1);
+        wieza_p2.addChild(ramie_p1);
         
         Appearance wyglad_alum = new Appearance();
         Texture tekstura_alum = new TextureLoader("obrazki/alum.jpg", this).getTexture();
@@ -257,25 +271,25 @@ public class PolarArm extends JFrame{
         
         TransformGroup wieza_p5 = new TransformGroup();
         Transform3D przesuniecie_wiezy5 = new Transform3D();
-        przesuniecie_wiezy5.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2+0.05f,0.0f));
+        przesuniecie_wiezy5.set(new Vector3f(0.0f,0.0f,0.0f));
         przesuniecie_wiezy5.mul(tmp_rot);
         wieza_p5.setTransform(przesuniecie_wiezy5);
         Cylinder walec5 = new Cylinder(0.1f,podstawa_szer+0.02f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         wieza_p5.addChild(walec5);
-        wezel_scena.addChild(wieza_p5);
+        ramie_p1.addChild(wieza_p5);
         
         
         
         TransformGroup ramie_p2 = new TransformGroup();
         Transform3D przesuniecie_ramie2 = new Transform3D();
-        przesuniecie_ramie2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2+promien_kola/2,0.2f));
+        przesuniecie_ramie2.set(new Vector3f(0.0f,0.0f,0.2f));
         Transform3D  tmp_rot2 = new Transform3D();
         tmp_rot2.rotX(Math.PI/2);
         przesuniecie_ramie2.mul(tmp_rot2);
         ramie_p2.setTransform(przesuniecie_ramie2);
         Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
-        wezel_scena.addChild(ramie_p2);
+        ramie_p1.addChild(ramie_p2);
 
 
         return wezel_scena;
