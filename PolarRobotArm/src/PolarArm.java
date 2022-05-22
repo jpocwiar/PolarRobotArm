@@ -135,7 +135,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
     public static JPanel dodanieInstrukcji() {
         JLabel label = new JLabel();
-        label.setIcon(new ImageIcon("src\\istrukcja_robota.jpg"));
+        label.setIcon(new ImageIcon("src\\instrukcja_robota.jpg"));
         JPanel panel_instrukcji = new JPanel(new FlowLayout());
         panel_instrukcji.add(label);
         return panel_instrukcji;
