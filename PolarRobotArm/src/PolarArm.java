@@ -414,18 +414,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             segment2.setTransform(przesuniecie_seg2);
             
         }
-        if (key_q) {
-            akcja.rotY(-Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg5);
-            
-        }
-        if (key_e) {
-            akcja.rotY(-Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg3);
-            
-        }
     }
 
     public void actionPerformed(ActionEvent e) {
