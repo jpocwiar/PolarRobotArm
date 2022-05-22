@@ -76,14 +76,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean key_d;
     boolean key_w;
     boolean key_s;
-    boolean key_r;
-    boolean key_f;
-    boolean key_t;
-    boolean key_g;
-    boolean key_y;
-    boolean key_h;
-    boolean key_u;
-    boolean key_j;
+    boolean key_q;
+    boolean key_e;
+
 
     CollisionDetector kolizja_kulki;
     CollisionDetector kolizja_chwytaka;
@@ -116,11 +111,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         Canvas3D canvas3D = new Canvas3D(config);
         canvas3D.setPreferredSize(new Dimension(1280,720));
-
+        
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
-        add(BorderLayout.WEST, dodanieInstrukcji());
+        add(BorderLayout.SOUTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
 
