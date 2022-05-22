@@ -26,47 +26,39 @@ import javax.vecmath.Vector3f;
 
 public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
-    BranchGroup glowna_scena = new BranchGroup();
-    BoundingSphere bounds;
+   
+    BranchGroup wezel_scena = new BranchGroup();
+    TransformGroup obrot_animacja = new TransformGroup();
+    BoundingSphere boundso;
     SimpleUniverse simpleU;
-    OrbitBehavior orbit; // musi być widoczny dla simpleU
+    OrbitBehavior orbita;
 
     JButton reset_kamery = new JButton();
     JButton zacznij_nagrywanie = new JButton();
     JButton zakoncz_nagrywanie = new JButton();
     JButton odtworz_nagranie = new JButton();
 
-    TransformGroup tg_podloga = new TransformGroup();
-    TransformGroup tg_podstawka = new TransformGroup();
-    TransformGroup tg_pierwszy_obraczacz = new TransformGroup();
-    TransformGroup tg_pierwsze_ramie = new TransformGroup();
-    TransformGroup tg_drugie_ramie = new TransformGroup();
-    TransformGroup tg_pochylacz_chwytaka = new TransformGroup();
-    TransformGroup tg_obraczacz_chwytaka = new TransformGroup();
-    TransformGroup tg_chwytak = new TransformGroup();
-    TransformGroup tg_kulka = new TransformGroup();
+  
+    
+    TransformGroup segment = new TransformGroup();
+        Transform3D przesuniecie_seg = new Transform3D();
+        TransformGroup segment2 = new TransformGroup();
+        Transform3D przesuniecie_seg2 = new Transform3D();
+        TransformGroup segment3 = new TransformGroup();
+        Transform3D przesuniecie_seg3 = new Transform3D();
+        TransformGroup segment4 = new TransformGroup();
+        Transform3D przesuniecie_seg4 = new Transform3D();
+        Transform3D przesuniecie_ram = new Transform3D();
+        
+        TransformGroup segment5 = new TransformGroup();
+        Transform3D przesuniecie_seg5 = new Transform3D();
+        TransformGroup ramie_p2 = new TransformGroup();
+        Transform3D przesuniecie_ramie2 = new Transform3D();
+        
 
-    Transform3D t3d_podloga = new Transform3D();
-    Transform3D t3d_podstawka = new Transform3D();
-    Transform3D t3d_pierwszy_obraczacz = new Transform3D();
-    Transform3D t3d_pierwsze_ramie = new Transform3D();
-    Transform3D t3d_drugie_ramie = new Transform3D();
-    Transform3D t3d_pochylacz_chwytaka = new Transform3D();
-    Transform3D t3d_obracacz_chwytaka = new Transform3D();
-    Transform3D t3d_chwytak = new Transform3D();
-    Transform3D t3d_kulka = new Transform3D();
+   
 
-    Transform3D t3d_podloga_nag = new Transform3D();
-    Transform3D t3d_podstawka_nag = new Transform3D();
-    Transform3D t3d_pierwszy_obraczacz_nag = new Transform3D();
-    Transform3D t3d_pierwsze_ramie_nag = new Transform3D();
-    Transform3D t3d_drugie_ramie_nag = new Transform3D();
-    Transform3D t3d_pochylacz_chwytaka_nag = new Transform3D();
-    Transform3D t3d_obracacz_chwytaka_nag = new Transform3D();
-    Transform3D t3d_chwytak_nag = new Transform3D();
-    Transform3D t3d_kulka_nag = new Transform3D();
-
-    BranchGroup kulkaBranch = new BranchGroup();
+    //BranchGroup kulkaBranch = new BranchGroup();
 
     boolean nagrywanie;
     boolean odtwarzanie;
@@ -78,7 +70,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean key_s;
     boolean key_q;
     boolean key_e;
-
+    
 
     CollisionDetector kolizja_kulki;
     CollisionDetector kolizja_chwytaka;
@@ -111,24 +103,29 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         Canvas3D canvas3D = new Canvas3D(config);
         canvas3D.setPreferredSize(new Dimension(1280,720));
-        
+        canvas3D.addKeyListener(this);
+        //canvas3D.add(new Keyboard());
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
         add(BorderLayout.SOUTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
+        
 
-        BranchGroup scena = utworzScene();
-	    scena.compile();
+         BranchGroup scena = new BranchGroup();
+        scena = utworzScene();
+        scena.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+	scena.compile();
            
 
-        SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
+        simpleU = new SimpleUniverse(canvas3D);
         ViewingPlatform viewingPlatform = simpleU.getViewingPlatform();
         
-        OrbitBehavior orbita = new OrbitBehavior(canvas3D,
+        
+        orbita = new OrbitBehavior(canvas3D,
 						OrbitBehavior.REVERSE_ALL);
-	BoundingSphere boundso = new BoundingSphere(new Point3d(0.0, 0.0, 0.0),
+	boundso = new BoundingSphere(new Point3d(0.0, 0.0, 0.0),
 						   100.0);
 	orbita.setSchedulingBounds(boundso);
 	viewingPlatform.setViewPlatformBehavior(orbita);
@@ -136,7 +133,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Transform3D przesuniecie_obserwatora = new Transform3D();
         Transform3D rot_obs = new Transform3D();
         rot_obs.rotY((float)(-Math.PI/7));
-        przesuniecie_obserwatora.set(new Vector3f(-1.2f,1.5f,2.0f));
+        przesuniecie_obserwatora.set(new Vector3f(-1.2f,2.0f,2.0f));
         przesuniecie_obserwatora.mul(rot_obs);
         rot_obs.rotX((float)(-Math.PI/6));
         przesuniecie_obserwatora.mul(rot_obs);
@@ -181,14 +178,15 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         int i;
 
         
-        BranchGroup wezel_scena = new BranchGroup();
+        wezel_scena.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
+        wezel_scena.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
         
-        TransformGroup obrot_animacja = new TransformGroup();
+        
         obrot_animacja.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         wezel_scena.addChild(obrot_animacja);
       
 
-        Alpha alpha_animacja = new Alpha(-1,5000);
+        Alpha alpha_animacja = new Alpha(-1,50000);
       //Alpha alpha_animacja2 = new Alpha(-1,Alpha.DECREASING_ENABLE,0,0,0,0,0,5000,0,0);
 
         RotationInterpolator obracacz = new RotationInterpolator(alpha_animacja, obrot_animacja);
@@ -209,7 +207,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Sphere niebo = new Sphere(5.0f,
         Primitive.GENERATE_NORMALS_INWARD + Primitive.GENERATE_TEXTURE_COORDS,
         wyglad_niebo);
-        wezel_scena.addChild(niebo);
+        obrot_animacja.addChild(niebo);
         //Material wmaterial_daszek = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.3f,0.0f,0.3f),
           //                                   new Color3f(0.6f, 0.1f, 0.1f), new Color3f(1.0f, 0.5f, 0.5f), 80.0f);
         //wyglad_daszek.setMaterial(wmaterial_daszek);
@@ -327,9 +325,14 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         //podstawa robota
         float wys_seg1=0.1f;
 
+        segment2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment2.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        segment2.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        segment2.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
+        segment.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment3.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment4.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
-        TransformGroup segment = new TransformGroup();
-        Transform3D przesuniecie_seg = new Transform3D();
         przesuniecie_seg.set(new Vector3f(0.0f,podstawa_wys + wys_seg1/2,0.0f));
         segment.setTransform(przesuniecie_seg);
 
@@ -339,21 +342,19 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         //ten główny słup
         float wys_seg2 = 0.6f;
-        TransformGroup segment2 = new TransformGroup();
-        Transform3D przesuniecie_seg2 = new Transform3D();
+        
         przesuniecie_seg2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2/2,0.0f));
         segment2.setTransform(przesuniecie_seg2);
 
         Cylinder walec2 = new Cylinder(podstawa_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         segment2.addChild(walec2);
-        obrot_animacja.addChild(segment2);
+        wezel_scena.addChild(segment2);
         
         //te koła z boku
         
         float gr_kola = 0.05f;
         float promien_kola = 0.15f;
-        TransformGroup segment3 = new TransformGroup();
-        Transform3D przesuniecie_seg3 = new Transform3D();
+        
         przesuniecie_seg3.set(new Vector3f(podstawa_szer/2-0.02f,wys_seg2/2+promien_kola/2,0.0f));
         Transform3D  tmp_rot      = new Transform3D();
         tmp_rot.rotZ(Math.PI/2);
@@ -363,8 +364,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Cylinder walec3 = new Cylinder(promien_kola,gr_kola,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         segment3.addChild(walec3);
         segment2.addChild(segment3);
-        TransformGroup segment4 = new TransformGroup();
-        Transform3D przesuniecie_seg4 = new Transform3D();
+        
         przesuniecie_seg4.set(new Vector3f(-podstawa_szer/2+0.02f,wys_seg2/2+promien_kola/2,0.0f));
         przesuniecie_seg4.mul(tmp_rot);
         segment4.setTransform(przesuniecie_seg4);
@@ -375,9 +375,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         //główne ramię
         
         Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
-        Transform3D przesuniecie_ram = new Transform3D();
-        przesuniecie_ram.setTranslation(new Vector3f(0.0f, wys_seg2/2+promien_kola/2, 0.0f));
+        
+        przesuniecie_ram.set(new Vector3f(0.0f, wys_seg2/2+promien_kola/2, 0.0f));
         TransformGroup ramie_p1 = new TransformGroup(przesuniecie_ram);
+        
         
         //Appearance wyglad_ram = new Appearance();
         //Texture tekstura_muru = new TextureLoader("obrazki/murek.gif", this).getTexture();
@@ -393,8 +394,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wyglad_alum.setTexture(tekstura_alum);
         
         //ten aluminiowy walec, wokół którego będzie wykonywany obrót w górę i w dół
-        TransformGroup segment5 = new TransformGroup();
-        Transform3D przesuniecie_seg5 = new Transform3D();
+        
         przesuniecie_seg5.set(new Vector3f(0.0f,0.0f,0.0f));
         przesuniecie_seg5.mul(tmp_rot);
         segment5.setTransform(przesuniecie_seg5);
@@ -404,8 +404,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         
         //wysuwane ramię aluminiowe
-        TransformGroup ramie_p2 = new TransformGroup();
-        Transform3D przesuniecie_ramie2 = new Transform3D();
+        
         przesuniecie_ramie2.set(new Vector3f(0.0f,0.0f,0.2f));
         Transform3D  tmp_rot2 = new Transform3D();
         tmp_rot2.rotX(Math.PI/2);
@@ -425,22 +424,101 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
       new PolarArm();
 
    }
+    
+    public void wykonajRuch(){
+        //Button a = new Button("click");
+        
+        Transform3D akcja = new Transform3D();
+        
+        if (key_a) {
+            akcja.rotY(Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg2);
+            
+        }
+        if (key_w) {
+            akcja.rotX(-Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg2);
+            
+        }
+        if (key_s) {
+            akcja.rotX(Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg2);
+            
+        }
+        if (key_d) {
+            akcja.rotY(-Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg2);
+            
+        }
+        if (key_q) {
+            akcja.rotY(-Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg5);
+            
+        }
+        if (key_e) {
+            akcja.rotY(-Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg3);
+            
+        }
+    }
 
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        //reset kamery realizowany przez przesunięcie obserwatora na wartość domyślną
+        if (e.getSource() == reset_kamery) {
+            Transform3D t = new Transform3D();
+            Transform3D przesuniecie_obserwatora = new Transform3D();
+            przesuniecie_obserwatora.set(new Vector3f(0.0f, 1.0f, 6.0f));
+            przesuniecie_obserwatora.mul(t);
+
+            simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
+        }
     }
 
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: 
+                System.out.println("aaaaaa");
+                key_a = true;
+                break;
+            case KeyEvent.VK_D:
+                key_d = true;
+                break;
+            case KeyEvent.VK_W: 
+                key_w = true;
+                break;
+            case KeyEvent.VK_S:
+                key_s = true;
+                break;
+        }
+        wykonajRuch();
     }
 
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A:
+                key_a = false;
+                break;
+            case KeyEvent.VK_D:
+                key_d = false;
+                break;
+            case KeyEvent.VK_W:
+                key_w = false;
+                break;
+            case KeyEvent.VK_S:
+                key_s = false;
+                break;
+        }
     }
 
 }
-
