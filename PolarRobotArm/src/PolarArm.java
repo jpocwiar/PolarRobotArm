@@ -41,24 +41,22 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
   
     
     TransformGroup segment = new TransformGroup();
-        Transform3D przesuniecie_seg = new Transform3D();
-        TransformGroup segment2 = new TransformGroup();
-        Transform3D przesuniecie_seg2 = new Transform3D();
-        TransformGroup segment3 = new TransformGroup();
-        Transform3D przesuniecie_seg3 = new Transform3D();
-        TransformGroup segment4 = new TransformGroup();
-        Transform3D przesuniecie_seg4 = new Transform3D();
-        Transform3D przesuniecie_ram = new Transform3D();
+    Transform3D przesuniecie_seg = new Transform3D();
+    TransformGroup segment2 = new TransformGroup();
+    Transform3D przesuniecie_seg2 = new Transform3D();
+    TransformGroup segment3 = new TransformGroup();
+    Transform3D przesuniecie_seg3 = new Transform3D();
+    TransformGroup segment4 = new TransformGroup();
+    Transform3D przesuniecie_seg4 = new Transform3D();
+    TransformGroup ramie_p1 = new TransformGroup();
+    Transform3D przesuniecie_ram = new Transform3D();
         
-        TransformGroup segment5 = new TransformGroup();
-        Transform3D przesuniecie_seg5 = new Transform3D();
-        TransformGroup ramie_p2 = new TransformGroup();
-        Transform3D przesuniecie_ramie2 = new Transform3D();
+    TransformGroup segment5 = new TransformGroup();
+    Transform3D przesuniecie_seg5 = new Transform3D();
+    TransformGroup ramie_p2 = new TransformGroup();
+    Transform3D przesuniecie_ramie2 = new Transform3D();
         
 
-   
-
-    //BranchGroup kulkaBranch = new BranchGroup();
 
     boolean nagrywanie;
     boolean odtwarzanie;
@@ -81,15 +79,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     private Timer grawitacjaTimer;
 
-    float kat_pierwsze_ramie = 0.0f;
-    float kat_drugie_ramie = 0.0f;
-    float kat_pochylacz_chwytaka = 0.0f;
-    float kat_obracacz_chwytaka = 0.0f;
-
-    float kat_pierwsze_ramie_nag = 0.0f;
-    float kat_drugie_ramie_nag = 0.0f;
-    float kat_pochylacz_chwytaka_nag = 0.0f;
-    float kat_obracacz_chwytaka_nag = 0.0f;
+    
     
     PolarArm(){
          super("Polar Robot Arm");
@@ -332,6 +322,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         segment.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment3.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment4.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        ramie_p1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        ramie_p2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
         przesuniecie_seg.set(new Vector3f(0.0f,podstawa_wys + wys_seg1/2,0.0f));
         segment.setTransform(przesuniecie_seg);
@@ -377,8 +369,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
         
         przesuniecie_ram.set(new Vector3f(0.0f, wys_seg2/2+promien_kola/2, 0.0f));
-        TransformGroup ramie_p1 = new TransformGroup(przesuniecie_ram);
         
+        ramie_p1.setTransform(przesuniecie_ram);
         
         //Appearance wyglad_ram = new Appearance();
         //Texture tekstura_muru = new TextureLoader("obrazki/murek.gif", this).getTexture();
@@ -410,7 +402,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         tmp_rot2.rotX(Math.PI/2);
         przesuniecie_ramie2.mul(tmp_rot2);
         ramie_p2.setTransform(przesuniecie_ramie2);
-        Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.7f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
 
@@ -431,39 +423,39 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Transform3D akcja = new Transform3D();
         
         if (key_a) {
-            akcja.rotY(Math.PI / 20);
+            akcja.rotY(Math.PI / 100);
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
         }
         if (key_w) {
-            akcja.rotX(-Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg2);
+            akcja.rotX(-Math.PI / 100);
+            przesuniecie_ram.mul(akcja);
+            ramie_p1.setTransform(przesuniecie_ram);
             
         }
         if (key_s) {
-            akcja.rotX(Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg2);
+            akcja.rotX(Math.PI / 100);
+            przesuniecie_ram.mul(akcja);
+            ramie_p1.setTransform(przesuniecie_ram);
             
         }
         if (key_d) {
-            akcja.rotY(-Math.PI / 20);
+            akcja.rotY(-Math.PI / 100);
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
         }
         if (key_q) {
-            akcja.rotY(-Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg5);
+            akcja.set(new Vector3f(0.0f,0.02f,0.0f));
+            przesuniecie_ramie2.mul(akcja);
+            ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
         if (key_e) {
-            akcja.rotY(-Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg3);
+           akcja.set(new Vector3f(0.0f,-0.02f,0.0f));
+            przesuniecie_ramie2.mul(akcja);
+            ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
     }
@@ -472,10 +464,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         //reset kamery realizowany przez przesunięcie obserwatora na wartość domyślną
         if (e.getSource() == reset_kamery) {
-            Transform3D t = new Transform3D();
             Transform3D przesuniecie_obserwatora = new Transform3D();
-            przesuniecie_obserwatora.set(new Vector3f(0.0f, 1.0f, 6.0f));
-            przesuniecie_obserwatora.mul(t);
+            Transform3D rot_obs = new Transform3D();
+            rot_obs.rotY((float)(-Math.PI/7));
+            przesuniecie_obserwatora.set(new Vector3f(-1.2f,2.0f,2.0f));
+            przesuniecie_obserwatora.mul(rot_obs);
+            rot_obs.rotX((float)(-Math.PI/6));
+            przesuniecie_obserwatora.mul(rot_obs);
 
             simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
         }
@@ -488,7 +483,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A: 
-                System.out.println("aaaaaa");
+                
                 key_a = true;
                 break;
             case KeyEvent.VK_D:
@@ -499,6 +494,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_S:
                 key_s = true;
+                break;
+            case KeyEvent.VK_Q:
+                key_q = true;
+                break;
+            case KeyEvent.VK_E:
+                key_e = true;
                 break;
         }
         wykonajRuch();
@@ -517,6 +518,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_S:
                 key_s = false;
+                break;
+            case KeyEvent.VK_Q:
+                key_q = false;
+                break;
+            case KeyEvent.VK_E:
+                key_e = false;
                 break;
         }
     }
