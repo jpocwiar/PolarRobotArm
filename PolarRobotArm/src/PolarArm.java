@@ -6,21 +6,110 @@ import javax.media.j3d.*;
 import java.awt.*;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Timer;
+import java.util.Vector;
 import javax.media.j3d.Transform3D;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-public class PolarArm extends JFrame{
+public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
+    BranchGroup glowna_scena = new BranchGroup();
+    BoundingSphere bounds;
+    SimpleUniverse simpleU;
+    OrbitBehavior orbit; // musi być widoczny dla simpleU
+
+    JButton reset_kamery = new JButton();
+    JButton zacznij_nagrywanie = new JButton();
+    JButton zakoncz_nagrywanie = new JButton();
+    JButton odtworz_nagranie = new JButton();
+
+    TransformGroup tg_podloga = new TransformGroup();
+    TransformGroup tg_podstawka = new TransformGroup();
+    TransformGroup tg_pierwszy_obraczacz = new TransformGroup();
+    TransformGroup tg_pierwsze_ramie = new TransformGroup();
+    TransformGroup tg_drugie_ramie = new TransformGroup();
+    TransformGroup tg_pochylacz_chwytaka = new TransformGroup();
+    TransformGroup tg_obraczacz_chwytaka = new TransformGroup();
+    TransformGroup tg_chwytak = new TransformGroup();
+    TransformGroup tg_kulka = new TransformGroup();
+
+    Transform3D t3d_podloga = new Transform3D();
+    Transform3D t3d_podstawka = new Transform3D();
+    Transform3D t3d_pierwszy_obraczacz = new Transform3D();
+    Transform3D t3d_pierwsze_ramie = new Transform3D();
+    Transform3D t3d_drugie_ramie = new Transform3D();
+    Transform3D t3d_pochylacz_chwytaka = new Transform3D();
+    Transform3D t3d_obracacz_chwytaka = new Transform3D();
+    Transform3D t3d_chwytak = new Transform3D();
+    Transform3D t3d_kulka = new Transform3D();
+
+    Transform3D t3d_podloga_nag = new Transform3D();
+    Transform3D t3d_podstawka_nag = new Transform3D();
+    Transform3D t3d_pierwszy_obraczacz_nag = new Transform3D();
+    Transform3D t3d_pierwsze_ramie_nag = new Transform3D();
+    Transform3D t3d_drugie_ramie_nag = new Transform3D();
+    Transform3D t3d_pochylacz_chwytaka_nag = new Transform3D();
+    Transform3D t3d_obracacz_chwytaka_nag = new Transform3D();
+    Transform3D t3d_chwytak_nag = new Transform3D();
+    Transform3D t3d_kulka_nag = new Transform3D();
+
+    BranchGroup kulkaBranch = new BranchGroup();
+
+    boolean nagrywanie;
+    boolean odtwarzanie;
+    Vector<KeyEvent> nagrane_przyciski = new Vector<KeyEvent>();
+
+    boolean key_a;
+    boolean key_d;
+    boolean key_w;
+    boolean key_s;
+    boolean key_r;
+    boolean key_f;
+    boolean key_t;
+    boolean key_g;
+    boolean key_y;
+    boolean key_h;
+    boolean key_u;
+    boolean key_j;
+
+    CollisionDetector kolizja_kulki;
+    CollisionDetector kolizja_chwytaka;
+    CollisionDetector kolizja_podlogi;
+    boolean podniesiona = false;
+    boolean puszczona = false;
+    boolean schwytany = false;
+
+    private Timer grawitacjaTimer;
+
+    float kat_pierwsze_ramie = 0.0f;
+    float kat_drugie_ramie = 0.0f;
+    float kat_pochylacz_chwytaka = 0.0f;
+    float kat_obracacz_chwytaka = 0.0f;
+
+    float kat_pierwsze_ramie_nag = 0.0f;
+    float kat_drugie_ramie_nag = 0.0f;
+    float kat_pochylacz_chwytaka_nag = 0.0f;
+    float kat_obracacz_chwytaka_nag = 0.0f;
+    
     PolarArm(){
          super("Polar Robot Arm");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
+       
 
         GraphicsConfiguration config =
            SimpleUniverse.getPreferredConfiguration();
@@ -30,6 +119,9 @@ public class PolarArm extends JFrame{
 
         add(canvas3D);
         pack();
+        add(BorderLayout.EAST, stworzPanelPrzyciskow());
+        add(BorderLayout.WEST, dodanieInstrukcji());
+        add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
 
         BranchGroup scena = utworzScene();
@@ -59,7 +151,35 @@ public class PolarArm extends JFrame{
         simpleU.addBranchGraph(scena);
 
     }
+    public static JPanel dodanieInstrukcji() {
+        JLabel label = new JLabel();
+        label.setIcon(new ImageIcon("src\\istrukcja_robota.jpg"));
+        JPanel panel_instrukcji = new JPanel(new FlowLayout());
+        panel_instrukcji.add(label);
+        return panel_instrukcji;
+    }
+    
+    public JPanel stworzPanelPrzyciskow() {
+        JPanel panel_menu = new JPanel(new GridLayout(4, 1));
 
+        reset_kamery.setText("Reset Kamery");
+        reset_kamery.addActionListener(this);
+
+        zacznij_nagrywanie.setText("Rozpocznij nagrywanie");
+        zacznij_nagrywanie.addActionListener(this);
+
+        zakoncz_nagrywanie.setText("Zakoncz nagrywanie");
+        zakoncz_nagrywanie.addActionListener(this);
+
+        odtworz_nagranie.setText("Odtworz nagranie");
+        odtworz_nagranie.addActionListener(this);
+
+        panel_menu.add(reset_kamery);
+        panel_menu.add(zacznij_nagrywanie);
+        panel_menu.add(zakoncz_nagrywanie);
+        panel_menu.add(odtworz_nagranie);
+        return panel_menu;
+    }
     BranchGroup utworzScene()
     {
 
@@ -77,7 +197,8 @@ public class PolarArm extends JFrame{
       //Alpha alpha_animacja2 = new Alpha(-1,Alpha.DECREASING_ENABLE,0,0,0,0,0,5000,0,0);
 
         RotationInterpolator obracacz = new RotationInterpolator(alpha_animacja, obrot_animacja);
-
+   
+        
         BoundingSphere bounds = new BoundingSphere();
         obracacz.setSchedulingBounds(bounds);
         obrot_animacja.addChild(obracacz);
@@ -302,4 +423,21 @@ public class PolarArm extends JFrame{
 
    }
 
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void keyTyped(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void keyPressed(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void keyReleased(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }
+
