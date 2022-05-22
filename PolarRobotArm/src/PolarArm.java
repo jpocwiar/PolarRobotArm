@@ -115,7 +115,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
            SimpleUniverse.getPreferredConfiguration();
 
         Canvas3D canvas3D = new Canvas3D(config);
-        canvas3D.setPreferredSize(new Dimension(960,720));
+        canvas3D.setPreferredSize(new Dimension(1280,720));
 
         add(canvas3D);
         pack();
@@ -205,7 +205,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         Appearance wyglad_ziemia = new Appearance();
         Appearance wyglad_mury   = new Appearance();
-        Appearance wyglad_daszek = new Appearance();
+        //Appearance wyglad_daszek = new Appearance();
 
         Texture tekstura_nieba = new TextureLoader("obrazki/clouds.gif", null, new Container()).getTexture();
         Appearance wyglad_niebo = new Appearance();
@@ -222,12 +222,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         TextureLoader loader = new TextureLoader("obrazki/beton.jpg",null);
         ImageComponent2D image = loader.getImage();
 
-        Texture2D trawka = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+        Texture2D podloga = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
                                         image.getWidth(), image.getHeight());
 
-        trawka.setImage(0, image);
-        trawka.setBoundaryModeS(Texture.WRAP);
-        trawka.setBoundaryModeT(Texture.WRAP);
+        podloga.setImage(0, image);
+        podloga.setBoundaryModeS(Texture.WRAP);
+        podloga.setBoundaryModeT(Texture.WRAP);
 
 
         loader = new TextureLoader("obrazki/black.jpg",this);
@@ -253,7 +253,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(lightD);
 
 
-        wyglad_ziemia.setTexture(trawka);
+        wyglad_ziemia.setTexture(podloga);
         wyglad_mury.setTexture(murek);
 
         Point3f[]  coords = new Point3f[4];
@@ -307,18 +307,20 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(ziemia);
         
 
-        //podstawa
-        float podstawa_szer = 0.3f;
-        //float podstawa_dl = 0.4f;
-        float podstawa_wys = 0.05f;
+        //segment
+        float segment_szer = 0.3f;
+        //float segment_dl = 0.4f;
+        float segment_wys = 0.05f;
+        
+        //murowana podstawa
         
         Appearance wyglad_muru = new Appearance();
         Texture tekstura_muru = new TextureLoader("obrazki/murek.gif", this).getTexture();
         wyglad_muru.setTexture(tekstura_muru);
         Transform3D przesuniecie_muru = new Transform3D();
-        przesuniecie_muru.setTranslation(new Vector3f(0.0f, podstawa_wys/2, 0.0f));
+        przesuniecie_muru.setTranslation(new Vector3f(0.0f, segment_wys/2, 0.0f));
         TransformGroup mur_p = new TransformGroup(przesuniecie_muru);
-        Box MurModel = new Box(podstawa_szer, podstawa_wys, podstawa_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_muru);
+        Box MurModel = new Box(segment_szer, segment_wys, segment_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_muru);
         
  
  
@@ -327,52 +329,57 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(mur_p);
         
         
-        //wieza
+        //podstawa robota
         float wys_seg1=0.1f;
 
         
-        TransformGroup wieza_p = new TransformGroup();
-        Transform3D przesuniecie_wiezy = new Transform3D();
-        przesuniecie_wiezy.set(new Vector3f(0.0f,podstawa_wys + wys_seg1/2,0.0f));
-        wieza_p.setTransform(przesuniecie_wiezy);
+        TransformGroup segment = new TransformGroup();
+        Transform3D przesuniecie_seg = new Transform3D();
+        przesuniecie_seg.set(new Vector3f(0.0f,segment_wys + wys_seg1/2,0.0f));
+        segment.setTransform(przesuniecie_seg);
 
-        Cylinder walec = new Cylinder(podstawa_szer-0.05f,wys_seg1,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
-        wieza_p.addChild(walec);
-        wezel_scena.addChild(wieza_p);
+        Cylinder walec = new Cylinder(segment_szer-0.05f,wys_seg1,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        segment.addChild(walec);
+        wezel_scena.addChild(segment);
         
+        //ten główny słup
         float wys_seg2 = 0.6f;
-        TransformGroup wieza_p2 = new TransformGroup();
-        Transform3D przesuniecie_wiezy2 = new Transform3D();
-        przesuniecie_wiezy2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2/2,0.0f));
-        wieza_p2.setTransform(przesuniecie_wiezy2);
+        TransformGroup segment2 = new TransformGroup();
+        Transform3D przesuniecie_seg2 = new Transform3D();
+        przesuniecie_seg2.set(new Vector3f(0.0f,segment_wys + wys_seg1 + wys_seg2/2,0.0f));
+        segment2.setTransform(przesuniecie_seg2);
 
-        Cylinder walec2 = new Cylinder(podstawa_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
-        wieza_p2.addChild(walec2);
-        obrot_animacja.addChild(wieza_p2);
+        Cylinder walec2 = new Cylinder(segment_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        segment2.addChild(walec2);
+        obrot_animacja.addChild(segment2);
+        
+        //te koła z boku
         
         float gr_kola = 0.05f;
         float promien_kola = 0.15f;
-        TransformGroup wieza_p3 = new TransformGroup();
-        Transform3D przesuniecie_wiezy3 = new Transform3D();
-        przesuniecie_wiezy3.set(new Vector3f(podstawa_szer/2-0.02f,wys_seg2/2+promien_kola/2,0.0f));
+        TransformGroup segment3 = new TransformGroup();
+        Transform3D przesuniecie_seg3 = new Transform3D();
+        przesuniecie_seg3.set(new Vector3f(segment_szer/2-0.02f,wys_seg2/2+promien_kola/2,0.0f));
         Transform3D  tmp_rot      = new Transform3D();
         tmp_rot.rotZ(Math.PI/2);
-        przesuniecie_wiezy3.mul(tmp_rot);
-        wieza_p3.setTransform(przesuniecie_wiezy3);
+        przesuniecie_seg3.mul(tmp_rot);
+        segment3.setTransform(przesuniecie_seg3);
 
         Cylinder walec3 = new Cylinder(promien_kola,gr_kola,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
-        wieza_p3.addChild(walec3);
-        wieza_p2.addChild(wieza_p3);
-        TransformGroup wieza_p4 = new TransformGroup();
-        Transform3D przesuniecie_wiezy4 = new Transform3D();
-        przesuniecie_wiezy4.set(new Vector3f(-podstawa_szer/2+0.02f,wys_seg2/2+promien_kola/2,0.0f));
-        przesuniecie_wiezy4.mul(tmp_rot);
-        wieza_p4.setTransform(przesuniecie_wiezy4);
+        segment3.addChild(walec3);
+        segment2.addChild(segment3);
+        TransformGroup segment4 = new TransformGroup();
+        Transform3D przesuniecie_seg4 = new Transform3D();
+        przesuniecie_seg4.set(new Vector3f(-segment_szer/2+0.02f,wys_seg2/2+promien_kola/2,0.0f));
+        przesuniecie_seg4.mul(tmp_rot);
+        segment4.setTransform(przesuniecie_seg4);
         Cylinder walec4 = new Cylinder(promien_kola,gr_kola,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
-        wieza_p4.addChild(walec4);
-        wieza_p2.addChild(wieza_p4);
+        segment4.addChild(walec4);
+        segment2.addChild(segment4);
         
-        Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        //główne ramię
+        
+        Box ramie1 = new Box(segment_szer-0.2f, segment_wys, segment_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
         Transform3D przesuniecie_ram = new Transform3D();
         przesuniecie_ram.setTranslation(new Vector3f(0.0f, wys_seg2/2+promien_kola/2, 0.0f));
         TransformGroup ramie_p1 = new TransformGroup(przesuniecie_ram);
@@ -384,23 +391,24 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
  
         ramie_p1.addChild(ramie1);
         
-        wieza_p2.addChild(ramie_p1);
+        segment2.addChild(ramie_p1);
         
         Appearance wyglad_alum = new Appearance();
         Texture tekstura_alum = new TextureLoader("obrazki/alum.jpg", this).getTexture();
         wyglad_alum.setTexture(tekstura_alum);
         
-        TransformGroup wieza_p5 = new TransformGroup();
-        Transform3D przesuniecie_wiezy5 = new Transform3D();
-        przesuniecie_wiezy5.set(new Vector3f(0.0f,0.0f,0.0f));
-        przesuniecie_wiezy5.mul(tmp_rot);
-        wieza_p5.setTransform(przesuniecie_wiezy5);
-        Cylinder walec5 = new Cylinder(0.1f,podstawa_szer+0.02f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
-        wieza_p5.addChild(walec5);
-        ramie_p1.addChild(wieza_p5);
+        //ten aluminiowy walec, wokół którego będzie wykonywany obrót w górę i w dół
+        TransformGroup segment5 = new TransformGroup();
+        Transform3D przesuniecie_seg5 = new Transform3D();
+        przesuniecie_seg5.set(new Vector3f(0.0f,0.0f,0.0f));
+        przesuniecie_seg5.mul(tmp_rot);
+        segment5.setTransform(przesuniecie_seg5);
+        Cylinder walec5 = new Cylinder(0.1f,segment_szer+0.02f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        segment5.addChild(walec5);
+        ramie_p1.addChild(segment5);
         
         
-        
+        //wysuwane ramię aluminiowe
         TransformGroup ramie_p2 = new TransformGroup();
         Transform3D przesuniecie_ramie2 = new Transform3D();
         przesuniecie_ramie2.set(new Vector3f(0.0f,0.0f,0.2f));
@@ -408,7 +416,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         tmp_rot2.rotX(Math.PI/2);
         przesuniecie_ramie2.mul(tmp_rot2);
         ramie_p2.setTransform(przesuniecie_ramie2);
-        Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        Cylinder ramie2 = new Cylinder(0.03f,segment_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
 
