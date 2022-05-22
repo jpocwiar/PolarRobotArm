@@ -69,6 +69,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean key_q;
     boolean key_e;
     
+    float wysuniecie=0.0f;
+    float kat_wychylenia=0.0f;
+    
 
     CollisionDetector kolizja_kulki;
     CollisionDetector kolizja_chwytaka;
@@ -418,7 +421,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
    }
     
     public void wykonajRuch(){
-        //Button a = new Button("click");
+        
         
         Transform3D akcja = new Transform3D();
         
@@ -428,14 +431,16 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             segment2.setTransform(przesuniecie_seg2);
             
         }
-        if (key_w) {
+        if (key_w  && kat_wychylenia < Math.PI/4) {
             akcja.rotX(-Math.PI / 100);
+            kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
             
         }
-        if (key_s) {
+        if (key_s  && kat_wychylenia > -Math.PI/4) {
             akcja.rotX(Math.PI / 100);
+            kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
             
@@ -446,16 +451,18 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             segment2.setTransform(przesuniecie_seg2);
             
         }
-        if (key_q) {
+        if (key_q && wysuniecie<0.6f) {
             akcja.set(new Vector3f(0.0f,0.02f,0.0f));
+            wysuniecie+=0.02f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
-        if (key_e) {
+        if (key_e && wysuniecie > 0.0f) {
            akcja.set(new Vector3f(0.0f,-0.02f,0.0f));
-            przesuniecie_ramie2.mul(akcja);
-            ramie_p2.setTransform(przesuniecie_ramie2);
+           wysuniecie-=0.02f;
+           przesuniecie_ramie2.mul(akcja);
+           ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
     }
