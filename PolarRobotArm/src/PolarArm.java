@@ -307,10 +307,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(ziemia);
         
 
-        //segment
-        float segment_szer = 0.3f;
-        //float segment_dl = 0.4f;
-        float segment_wys = 0.05f;
+        //podstawa
+        float podstawa_szer = 0.3f;
+        //float podstawa_dl = 0.4f;
+        float podstawa_wys = 0.05f;
         
         //murowana podstawa
         
@@ -318,9 +318,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Texture tekstura_muru = new TextureLoader("obrazki/murek.gif", this).getTexture();
         wyglad_muru.setTexture(tekstura_muru);
         Transform3D przesuniecie_muru = new Transform3D();
-        przesuniecie_muru.setTranslation(new Vector3f(0.0f, segment_wys/2, 0.0f));
+        przesuniecie_muru.setTranslation(new Vector3f(0.0f, podstawa_wys/2, 0.0f));
         TransformGroup mur_p = new TransformGroup(przesuniecie_muru);
-        Box MurModel = new Box(segment_szer, segment_wys, segment_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_muru);
+        Box MurModel = new Box(podstawa_szer, podstawa_wys, podstawa_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_muru);
         
  
  
@@ -335,10 +335,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         TransformGroup segment = new TransformGroup();
         Transform3D przesuniecie_seg = new Transform3D();
-        przesuniecie_seg.set(new Vector3f(0.0f,segment_wys + wys_seg1/2,0.0f));
+        przesuniecie_seg.set(new Vector3f(0.0f,podstawa_wys + wys_seg1/2,0.0f));
         segment.setTransform(przesuniecie_seg);
 
-        Cylinder walec = new Cylinder(segment_szer-0.05f,wys_seg1,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        Cylinder walec = new Cylinder(podstawa_szer-0.05f,wys_seg1,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         segment.addChild(walec);
         wezel_scena.addChild(segment);
         
@@ -346,10 +346,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         float wys_seg2 = 0.6f;
         TransformGroup segment2 = new TransformGroup();
         Transform3D przesuniecie_seg2 = new Transform3D();
-        przesuniecie_seg2.set(new Vector3f(0.0f,segment_wys + wys_seg1 + wys_seg2/2,0.0f));
+        przesuniecie_seg2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2/2,0.0f));
         segment2.setTransform(przesuniecie_seg2);
 
-        Cylinder walec2 = new Cylinder(segment_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        Cylinder walec2 = new Cylinder(podstawa_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         segment2.addChild(walec2);
         obrot_animacja.addChild(segment2);
         
@@ -359,7 +359,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         float promien_kola = 0.15f;
         TransformGroup segment3 = new TransformGroup();
         Transform3D przesuniecie_seg3 = new Transform3D();
-        przesuniecie_seg3.set(new Vector3f(segment_szer/2-0.02f,wys_seg2/2+promien_kola/2,0.0f));
+        przesuniecie_seg3.set(new Vector3f(podstawa_szer/2-0.02f,wys_seg2/2+promien_kola/2,0.0f));
         Transform3D  tmp_rot      = new Transform3D();
         tmp_rot.rotZ(Math.PI/2);
         przesuniecie_seg3.mul(tmp_rot);
@@ -370,7 +370,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         segment2.addChild(segment3);
         TransformGroup segment4 = new TransformGroup();
         Transform3D przesuniecie_seg4 = new Transform3D();
-        przesuniecie_seg4.set(new Vector3f(-segment_szer/2+0.02f,wys_seg2/2+promien_kola/2,0.0f));
+        przesuniecie_seg4.set(new Vector3f(-podstawa_szer/2+0.02f,wys_seg2/2+promien_kola/2,0.0f));
         przesuniecie_seg4.mul(tmp_rot);
         segment4.setTransform(przesuniecie_seg4);
         Cylinder walec4 = new Cylinder(promien_kola,gr_kola,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
@@ -379,7 +379,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         //główne ramię
         
-        Box ramie1 = new Box(segment_szer-0.2f, segment_wys, segment_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
         Transform3D przesuniecie_ram = new Transform3D();
         przesuniecie_ram.setTranslation(new Vector3f(0.0f, wys_seg2/2+promien_kola/2, 0.0f));
         TransformGroup ramie_p1 = new TransformGroup(przesuniecie_ram);
@@ -403,7 +403,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         przesuniecie_seg5.set(new Vector3f(0.0f,0.0f,0.0f));
         przesuniecie_seg5.mul(tmp_rot);
         segment5.setTransform(przesuniecie_seg5);
-        Cylinder walec5 = new Cylinder(0.1f,segment_szer+0.02f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        Cylinder walec5 = new Cylinder(0.1f,podstawa_szer+0.02f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         segment5.addChild(walec5);
         ramie_p1.addChild(segment5);
         
@@ -416,7 +416,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         tmp_rot2.rotX(Math.PI/2);
         przesuniecie_ramie2.mul(tmp_rot2);
         ramie_p2.setTransform(przesuniecie_ramie2);
-        Cylinder ramie2 = new Cylinder(0.03f,segment_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.5f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
 
