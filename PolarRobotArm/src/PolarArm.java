@@ -457,23 +457,27 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         if (key_q) {
             akcja.rotY(-Math.PI / 20);
             przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg2);
+            segment2.setTransform(przesuniecie_seg5);
             
         }
         if (key_e) {
             akcja.rotY(-Math.PI / 20);
             przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg2);
+            segment2.setTransform(przesuniecie_seg3);
             
         }
     }
 
     public void actionPerformed(ActionEvent e) {
+
+        //reset kamery realizowany przez przesunięcie obserwatora na wartość domyślną
         if (e.getSource() == reset_kamery) {
-            Transform3D akcja = new Transform3D();
-            akcja.rotY(Math.PI / 20);
-            przesuniecie_seg2.mul(akcja);
-            segment2.setTransform(przesuniecie_seg2);
+            Transform3D t = new Transform3D();
+            Transform3D przesuniecie_obserwatora = new Transform3D();
+            przesuniecie_obserwatora.set(new Vector3f(0.0f, 1.0f, 6.0f));
+            przesuniecie_obserwatora.mul(t);
+
+            simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
         }
     }
 
