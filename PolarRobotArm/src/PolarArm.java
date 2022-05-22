@@ -55,13 +55,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D przesuniecie_seg5 = new Transform3D();
     TransformGroup ramie_p2 = new TransformGroup();
     Transform3D przesuniecie_ramie2 = new Transform3D();
-        
-
-
-    boolean nagrywanie;
-    boolean odtwarzanie;
-    Vector<KeyEvent> nagrane_przyciski = new Vector<KeyEvent>();
-
+    
     boolean key_a;
     boolean key_d;
     boolean key_w;
@@ -71,37 +65,23 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     float wysuniecie=0.0f;
     float kat_wychylenia=0.0f;
-    
 
-    CollisionDetector kolizja_kulki;
-    CollisionDetector kolizja_chwytaka;
-    CollisionDetector kolizja_podlogi;
-    boolean podniesiona = false;
-    boolean puszczona = false;
-    boolean schwytany = false;
-
-    private Timer grawitacjaTimer;
-
-    
-    
     PolarArm(){
          super("Polar Robot Arm");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-       
-
         GraphicsConfiguration config =
            SimpleUniverse.getPreferredConfiguration();
 
         Canvas3D canvas3D = new Canvas3D(config);
-        canvas3D.setPreferredSize(new Dimension(1280,720));
+        canvas3D.setPreferredSize(new Dimension(960,720));
         canvas3D.addKeyListener(this);
         //canvas3D.add(new Keyboard());
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
-        add(BorderLayout.SOUTH, dodanieInstrukcji());
+        add(BorderLayout.NORTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
         
@@ -110,8 +90,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         scena = utworzScene();
         scena.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 	scena.compile();
-           
-
+        
         simpleU = new SimpleUniverse(canvas3D);
         ViewingPlatform viewingPlatform = simpleU.getViewingPlatform();
         
@@ -469,7 +448,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     public void actionPerformed(ActionEvent e) {
 
-        //reset kamery realizowany przez przesunięcie obserwatora na wartość domyślną
         if (e.getSource() == reset_kamery) {
             Transform3D przesuniecie_obserwatora = new Transform3D();
             Transform3D rot_obs = new Transform3D();
