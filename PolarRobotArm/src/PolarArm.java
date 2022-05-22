@@ -71,26 +71,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean key_q;
     boolean key_e;
     
-
-    CollisionDetector kolizja_kulki;
-    CollisionDetector kolizja_chwytaka;
-    CollisionDetector kolizja_podlogi;
-    boolean podniesiona = false;
-    boolean puszczona = false;
-    boolean schwytany = false;
-
-    private Timer grawitacjaTimer;
-
-    float kat_pierwsze_ramie = 0.0f;
-    float kat_drugie_ramie = 0.0f;
-    float kat_pochylacz_chwytaka = 0.0f;
-    float kat_obracacz_chwytaka = 0.0f;
-
-    float kat_pierwsze_ramie_nag = 0.0f;
-    float kat_drugie_ramie_nag = 0.0f;
-    float kat_pochylacz_chwytaka_nag = 0.0f;
-    float kat_obracacz_chwytaka_nag = 0.0f;
-    
     PolarArm(){
          super("Polar Robot Arm");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -186,15 +166,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(obrot_animacja);
       
 
-        Alpha alpha_animacja = new Alpha(-1,50000);
-      //Alpha alpha_animacja2 = new Alpha(-1,Alpha.DECREASING_ENABLE,0,0,0,0,0,5000,0,0);
-
-        RotationInterpolator obracacz = new RotationInterpolator(alpha_animacja, obrot_animacja);
-   
-        
-        BoundingSphere bounds = new BoundingSphere();
-        obracacz.setSchedulingBounds(bounds);
-        obrot_animacja.addChild(obracacz);
 
         Appearance wyglad_ziemia = new Appearance();
         Appearance wyglad_mury   = new Appearance();
@@ -233,17 +204,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         murek.setBoundaryModeT(Texture.WRAP);
 
         
-
-        //BoundingSphere bounds = new BoundingSphere();
-        AmbientLight lightA = new AmbientLight();
-        lightA.setInfluencingBounds(bounds);
-        wezel_scena.addChild(lightA);
-
-        DirectionalLight lightD = new DirectionalLight();
-        lightD.setInfluencingBounds(bounds);
-        lightD.setDirection(new Vector3f(0.0f, 0.0f, -1.0f));
-        lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
-        wezel_scena.addChild(lightD);
 
 
         wyglad_ziemia.setTexture(podloga);
