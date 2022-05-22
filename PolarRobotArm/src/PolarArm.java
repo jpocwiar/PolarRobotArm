@@ -108,7 +108,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
-        add(BorderLayout.WEST, dodanieInstrukcji());
+        add(BorderLayout.SOUTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
         
@@ -437,19 +437,31 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             
         }
         if (key_w) {
-            akcja.rotX(Math.PI / 20);
+            akcja.rotX(-Math.PI / 20);
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
         }
         if (key_s) {
-            akcja.rotZ(Math.PI / 20);
+            akcja.rotX(Math.PI / 20);
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
         }
         if (key_d) {
-            akcja.rotY(Math.PI / 20);
+            akcja.rotY(-Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg2);
+            
+        }
+        if (key_q) {
+            akcja.rotY(-Math.PI / 20);
+            przesuniecie_seg2.mul(akcja);
+            segment2.setTransform(przesuniecie_seg2);
+            
+        }
+        if (key_e) {
+            akcja.rotY(-Math.PI / 20);
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
@@ -506,4 +518,3 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
 
 }
-
