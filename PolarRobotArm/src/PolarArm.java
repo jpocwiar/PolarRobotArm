@@ -161,7 +161,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         panel_menu.add(zacznij_nagrywanie);
         panel_menu.add(zakoncz_nagrywanie);
         panel_menu.add(odtworz_nagranie);
-        panel_menu.add(new JLabel("Kąt robota [-360°,360°]:"));
+        panel_menu.add(new JLabel("Kąt robota (-360°,360°):"));
         panel_menu.add(textObrot1);
         panel_menu.add(new JLabel("Kąt ramienia [-45°,45°]:"));
         panel_menu.add(textObrot2);
@@ -507,9 +507,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
         }
         if (e.getSource() == ustawKoordynaty) {
-            float celWysuniecia = Float.parseFloat(textWysuniecie.getText()) % 100;
+            float celWysuniecia = Float.parseFloat(textWysuniecie.getText()) % 101;
             float celObrotu1 = Float.parseFloat(textObrot1.getText()) % 360;
-            float celObrotu2 = Float.parseFloat(textObrot2.getText()) % 45;
+            float celObrotu2 = Float.parseFloat(textObrot2.getText()) % 46;
             
             
             while(kat_obrotu/Math.PI*180<celObrotu1-1){
@@ -532,12 +532,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 keyReleased(klawisz_S);
                 czekaj();
             }
-            while(wysuniecie/0.61*100<celWysuniecia){
+            while(wysuniecie/0.6*100<celWysuniecia-1){
                 keyPressed(klawisz_Q);
                 keyReleased(klawisz_Q);
                 czekaj();
             }
-            while(wysuniecie/0.61*100>celWysuniecia){
+            while(wysuniecie/0.6*100>celWysuniecia){
                 keyPressed(klawisz_E);
                 keyReleased(klawisz_E);
                 czekaj();
