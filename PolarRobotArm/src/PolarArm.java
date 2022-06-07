@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3d;
@@ -37,8 +38,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     JButton zacznij_nagrywanie = new JButton();
     JButton zakoncz_nagrywanie = new JButton();
     JButton odtworz_nagranie = new JButton();
+    JButton ustawKoordynaty = new JButton();
 
-  
+    JTextArea textObrot1 = new JTextArea();
+    JTextArea textObrot2 = new JTextArea();
+    JTextArea textWysuniecie = new JTextArea();
     
     TransformGroup segment = new TransformGroup();
     Transform3D przesuniecie_seg = new Transform3D();
@@ -65,6 +69,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     float wysuniecie=0.0f;
     float kat_wychylenia=0.0f;
+    float kat_obrotu=0.0f;
 
     PolarArm(){
          super("Polar Robot Arm");
@@ -75,7 +80,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
            SimpleUniverse.getPreferredConfiguration();
 
         Canvas3D canvas3D = new Canvas3D(config);
-        canvas3D.setPreferredSize(new Dimension(960,720));
+        canvas3D.setPreferredSize(new Dimension(1280,720));
         canvas3D.addKeyListener(this);
         //canvas3D.add(new Keyboard());
         add(canvas3D);
@@ -124,7 +129,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
     
     public JPanel stworzPanelPrzyciskow() {
-        JPanel panel_menu = new JPanel(new GridLayout(4, 1));
+        JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
 
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
@@ -137,11 +142,32 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         odtworz_nagranie.setText("Odtworz nagranie");
         odtworz_nagranie.addActionListener(this);
+        
+        textObrot1 = new JTextArea(1,5);
+        textObrot1.setFont(new Font("Tahoma",Font.BOLD,40));
+        textObrot1.setText("0.00");
+        textObrot2 = new JTextArea(1,5);
+        textObrot2.setFont(new Font("Tahoma",Font.BOLD,40));
+        textObrot2.setText("0.00");
+        textWysuniecie = new JTextArea(1,5);
+        textWysuniecie.setFont(new Font("Tahoma",Font.BOLD,40));
+        textWysuniecie.setText("0.00");
+        ustawKoordynaty.setText("Ustaw Koordynaty");
+        ustawKoordynaty.addActionListener(this);
+        
+        
 
         panel_menu.add(reset_kamery);
         panel_menu.add(zacznij_nagrywanie);
         panel_menu.add(zakoncz_nagrywanie);
         panel_menu.add(odtworz_nagranie);
+        panel_menu.add(new JLabel("Kąt robota [-360°,360°]:"));
+        panel_menu.add(textObrot1);
+        panel_menu.add(new JLabel("Kąt ramienia [-45°,45°]:"));
+        panel_menu.add(textObrot2);
+        panel_menu.add(new JLabel("Wysuniecie ramienia [%]:"));
+        panel_menu.add(textWysuniecie);
+        panel_menu.add(ustawKoordynaty);
         return panel_menu;
     }
     BranchGroup utworzScene()
@@ -399,26 +425,37 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
    }
     
+    public void czekaj(){
+        try {
+            Thread.sleep(20);
+      } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+      }
+    }
+    
     public void wykonajRuch(){
         
         
         Transform3D akcja = new Transform3D();
         
+        
         if (key_a) {
             akcja.rotY(Math.PI / 100);
+            kat_obrotu+=Math.PI / 100;
+            kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
         }
         if (key_w  && kat_wychylenia < Math.PI/4) {
-            akcja.rotX(-Math.PI / 100);
+            akcja.rotX(Math.PI / 100);
             kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
             
         }
         if (key_s  && kat_wychylenia > -Math.PI/4) {
-            akcja.rotX(Math.PI / 100);
+            akcja.rotX(-Math.PI / 100);
             kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
@@ -426,28 +463,38 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         }
         if (key_d) {
             akcja.rotY(-Math.PI / 100);
+            kat_obrotu-=Math.PI / 100;
+            kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
             
         }
-        if (key_q && wysuniecie<0.6f) {
-            akcja.set(new Vector3f(0.0f,0.02f,0.0f));
-            wysuniecie+=0.02f;
+        if (key_q && wysuniecie<0.59f) {
+            akcja.set(new Vector3f(0.0f,0.01f,0.0f));
+            wysuniecie+=0.01f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
-        if (key_e && wysuniecie > 0.0f) {
-           akcja.set(new Vector3f(0.0f,-0.02f,0.0f));
-           wysuniecie-=0.02f;
+        if (key_e && wysuniecie > 0.01f) {
+           akcja.set(new Vector3f(0.0f,-0.01f,0.0f));
+           wysuniecie-=0.01f;
            przesuniecie_ramie2.mul(akcja);
            ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
+        textObrot1.setText(String.format("%.2f", kat_obrotu/Math.PI*180));
+        textObrot2.setText(String.format("%.2f", kat_wychylenia/Math.PI*180));
+        textWysuniecie.setText(String.format("%.2f", wysuniecie/0.6 * 100));
     }
 
     public void actionPerformed(ActionEvent e) {
-
+        KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
+        KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
+        KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
+        KeyEvent klawisz_D = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_D, 'D');
+        KeyEvent klawisz_W = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_W, 'W');
+        KeyEvent klawisz_S = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_S, 'S');
         if (e.getSource() == reset_kamery) {
             Transform3D przesuniecie_obserwatora = new Transform3D();
             Transform3D rot_obs = new Transform3D();
@@ -458,6 +505,44 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             przesuniecie_obserwatora.mul(rot_obs);
 
             simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
+        }
+        if (e.getSource() == ustawKoordynaty) {
+            float celWysuniecia = Float.parseFloat(textWysuniecie.getText()) % 100;
+            float celObrotu1 = Float.parseFloat(textObrot1.getText()) % 360;
+            float celObrotu2 = Float.parseFloat(textObrot2.getText()) % 45;
+            
+            
+            while(kat_obrotu/Math.PI*180<celObrotu1-1){
+                keyPressed(klawisz_A);
+                keyReleased(klawisz_A);
+                czekaj();
+            }
+            while(kat_obrotu/Math.PI*180>celObrotu1+1){
+                keyPressed(klawisz_D);
+                keyReleased(klawisz_D);
+                czekaj();
+            }
+            while(kat_wychylenia/Math.PI*180<celObrotu2-1){
+                keyPressed(klawisz_W);
+                keyReleased(klawisz_W);
+                czekaj();
+            }
+            while(kat_wychylenia/Math.PI*180>celObrotu2+1){
+                keyPressed(klawisz_S);
+                keyReleased(klawisz_S);
+                czekaj();
+            }
+            while(wysuniecie/0.61*100<celWysuniecia){
+                keyPressed(klawisz_Q);
+                keyReleased(klawisz_Q);
+                czekaj();
+            }
+            while(wysuniecie/0.61*100>celWysuniecia){
+                keyPressed(klawisz_E);
+                keyReleased(klawisz_E);
+                czekaj();
+            }
+            
         }
     }
 
