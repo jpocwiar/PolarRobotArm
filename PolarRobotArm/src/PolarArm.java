@@ -10,9 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.Timer;
 import java.util.Vector;
 import javax.media.j3d.Transform3D;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -61,6 +64,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D przesuniecie_seg5 = new Transform3D();
     TransformGroup ramie_p2 = new TransformGroup();
     Transform3D przesuniecie_ramie2 = new Transform3D();
+	
     Transform3D tg_kulka_nag = new Transform3D();
 
     BranchGroup kulkaBranch = new BranchGroup();
@@ -418,10 +422,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.7f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
-
-
-        /// kulka 
-     Material kulkowy = new Material();
+	    
+	/// kulka 
+     	Material kulkowy = new Material();
         kulkowy.setEmissiveColor(0.80f, 0.1f, 0.26f);
         kulkowy.setDiffuseColor(0.32f, 0.21f, 0.08f);
         kulkowy.setSpecularColor(0.45f, 0.32f, 0.21f);
@@ -443,7 +446,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         kulkaBranch.setCapability(BranchGroup.ALLOW_DETACH);
         kulkaBranch.addChild(tg_kulka);
         wezel_scena.addChild(kulkaBranch);
-        
+
+
         return wezel_scena;
 
 
@@ -461,6 +465,17 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             Thread.currentThread().interrupt();
       }
     }
+    public void dzwiek(){
+        try {
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src\\dzwiek2.wav").getAbsoluteFile());
+            javax.sound.sampled.Clip clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
+        clip.start();
+    } catch(Exception ex) {
+        System.out.println("Error with playing sound.");
+        ex.printStackTrace();
+    }
+    }
     
     public void wykonajRuch(){
         
@@ -474,6 +489,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
+            dzwiek();
             
         }
         if (key_w  && kat_wychylenia < Math.PI/4) {
@@ -481,6 +497,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
+            dzwiek();
             
         }
         if (key_s  && kat_wychylenia > -Math.PI/4) {
@@ -488,6 +505,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
+            dzwiek();
             
         }
         if (key_d) {
@@ -496,6 +514,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
+            dzwiek();
             
         }
         if (key_q && wysuniecie<0.59f) {
@@ -503,6 +522,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             wysuniecie+=0.01f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
+            dzwiek();
             
         }
         if (key_e && wysuniecie > 0.01f) {
@@ -510,11 +530,14 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
            wysuniecie-=0.01f;
            przesuniecie_ramie2.mul(akcja);
            ramie_p2.setTransform(przesuniecie_ramie2);
+           dzwiek();
             
         }
         textObrot1.setText(String.format("%.2f", kat_obrotu/Math.PI*180));
         textObrot2.setText(String.format("%.2f", kat_wychylenia/Math.PI*180));
         textWysuniecie.setText(String.format("%.2f", wysuniecie/0.6 * 100));
+        
+        
     }
 
     public void actionPerformed(ActionEvent e) {
