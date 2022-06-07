@@ -54,11 +54,16 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D przesuniecie_seg4 = new Transform3D();
     TransformGroup ramie_p1 = new TransformGroup();
     Transform3D przesuniecie_ram = new Transform3D();
+    TransformGroup tg_kulka = new TransformGroup();
+    Transform3D t3d_kulka = new Transform3D();
         
     TransformGroup segment5 = new TransformGroup();
     Transform3D przesuniecie_seg5 = new Transform3D();
     TransformGroup ramie_p2 = new TransformGroup();
     Transform3D przesuniecie_ramie2 = new Transform3D();
+    Transform3D tg_kulka_nag = new Transform3D();
+
+    BranchGroup kulkaBranch = new BranchGroup();
     
     boolean key_a;
     boolean key_d;
@@ -415,6 +420,30 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ramie_p1.addChild(ramie_p2);
 
 
+        /// kulka 
+     Material kulkowy = new Material();
+        kulkowy.setEmissiveColor(0.80f, 0.1f, 0.26f);
+        kulkowy.setDiffuseColor(0.32f, 0.21f, 0.08f);
+        kulkowy.setSpecularColor(0.45f, 0.32f, 0.21f);
+        kulkowy.setShininess(38f);
+
+        Appearance stylKulka = new Appearance();
+        stylKulka.setMaterial(kulkowy);
+
+        Transform3D t3d_przesuniecie = new Transform3D();
+        tg_kulka.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        tg_kulka.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        t3d_przesuniecie.set(new Vector3f(0.0f, 0.2f, 1.0f)); // przesuwam obiekt z orgin na miejsce
+        t3d_kulka.mul(t3d_przesuniecie);
+        tg_kulka.setTransform(t3d_przesuniecie);
+        Sphere kulka = new Sphere(0.2f, stylKulka);
+        tg_kulka.addChild(kulka);
+        tg_kulka.setUserData("kulka");
+
+        kulkaBranch.setCapability(BranchGroup.ALLOW_DETACH);
+        kulkaBranch.addChild(tg_kulka);
+        wezel_scena.addChild(kulkaBranch);
+        
         return wezel_scena;
 
 
