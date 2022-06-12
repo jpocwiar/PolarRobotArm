@@ -79,6 +79,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     float wysuniecie=0.0f;
     float kat_wychylenia=0.0f;
     float kat_obrotu=0.0f;
+    
+    
+    boolean gra_dzwiek = false;
 
     PolarArm(){
          super("Polar Robot Arm");
@@ -465,16 +468,22 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             Thread.currentThread().interrupt();
       }
     }
-    public void dzwiek(){
+    public void dzwiek(boolean czy){
         try {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src\\dzwiek2.wav").getAbsoluteFile());
-            javax.sound.sampled.Clip clip = AudioSystem.getClip();
+        javax.sound.sampled.Clip clip = AudioSystem.getClip();
         clip.open(audioInputStream);
-        clip.start();
-    } catch(Exception ex) {
-        System.out.println("Error with playing sound.");
-        ex.printStackTrace();
-    }
+        if(czy) {
+            clip.start();
+            }
+        else{
+            clip.stop();
+        }
+        
+        } catch(Exception ex) {
+            System.out.println("Nie można odtworzyć dźwięku");
+            ex.printStackTrace();
+        }
     }
     
     public void wykonajRuch(){
@@ -482,22 +491,18 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         Transform3D akcja = new Transform3D();
         
-        
         if (key_a) {
             akcja.rotY(Math.PI / 100);
             kat_obrotu+=Math.PI / 100;
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            dzwiek();
-            
         }
         if (key_w  && kat_wychylenia < Math.PI/4) {
             akcja.rotX(Math.PI / 100);
             kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
-            dzwiek();
             
         }
         if (key_s  && kat_wychylenia > -Math.PI/4) {
@@ -505,7 +510,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
-            dzwiek();
             
         }
         if (key_d) {
@@ -514,7 +518,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            dzwiek();
             
         }
         if (key_q && wysuniecie<0.59f) {
@@ -522,7 +525,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             wysuniecie+=0.01f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
-            dzwiek();
             
         }
         if (key_e && wysuniecie > 0.01f) {
@@ -530,8 +532,15 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
            wysuniecie-=0.01f;
            przesuniecie_ramie2.mul(akcja);
            ramie_p2.setTransform(przesuniecie_ramie2);
-           dzwiek();
             
+        }
+        if((key_a || key_s || key_d || key_w || key_q ||key_e) && !gra_dzwiek){
+            dzwiek(true);
+            gra_dzwiek = true;
+        }
+        else if(!(key_a || key_s || key_d || key_w || key_q ||key_e) && gra_dzwiek){
+            dzwiek(false);
+            gra_dzwiek = false;
         }
         textObrot1.setText(String.format("%.2f", kat_obrotu/Math.PI*180));
         textObrot2.setText(String.format("%.2f", kat_wychylenia/Math.PI*180));
