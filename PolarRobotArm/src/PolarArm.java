@@ -69,6 +69,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     BranchGroup kulkaBranch = new BranchGroup();
     
+    CollisionDetectorGroup kolizja_kulki;
+    CollisionDetectorGroup kolizja_chwytaka;
+    CollisionDetectorGroup kolizja_podlogi;
+    
     boolean key_a;
     boolean key_d;
     boolean key_w;
@@ -306,8 +310,14 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         Shape3D ziemia = new Shape3D(qa_ziemia);
         ziemia.setAppearance(wyglad_ziemia);
+        TransformGroup ziemiaTrans = new TransformGroup();
+        ziemiaTrans.addChild(ziemia);
 
-        wezel_scena.addChild(ziemia);
+        wezel_scena.addChild(ziemiaTrans);
+        kolizja_podlogi = new CollisionDetectorGroup(ziemiaTrans,
+                new BoundingBox(new Point3d(-10.0f, -0.01f, -10.23f), new Point3d(10.0f, 0f, 10.23f)));
+        kolizja_podlogi.setSchedulingBounds(new BoundingSphere(new Point3d(), 20f));
+        wezel_scena.addChild(kolizja_podlogi);
         
 
         //podstawa
@@ -425,6 +435,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.7f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
+        
+        kolizja_chwytaka = new CollisionDetectorGroup(ramie_p2,
+                new BoundingSphere(new Point3d(0.0f, 0f, -0.23f), 0.04f)); // (0.09f, 1.3f, -1.28f)
+        kolizja_chwytaka.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
+        wezel_scena.addChild(kolizja_chwytaka);
 	    
 	/// kulka 
      	Material kulkowy = new Material();
@@ -442,13 +457,20 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         t3d_przesuniecie.set(new Vector3f(0.0f, 0.2f, 1.0f)); // przesuwam obiekt z orgin na miejsce
         t3d_kulka.mul(t3d_przesuniecie);
         tg_kulka.setTransform(t3d_przesuniecie);
-        Sphere kulka = new Sphere(0.2f, stylKulka);
+        Sphere kulka = new Sphere(0.1f, stylKulka);
         tg_kulka.addChild(kulka);
         tg_kulka.setUserData("kulka");
 
         kulkaBranch.setCapability(BranchGroup.ALLOW_DETACH);
         kulkaBranch.addChild(tg_kulka);
         wezel_scena.addChild(kulkaBranch);
+        
+        kolizja_kulki = new CollisionDetectorGroup(tg_kulka,
+                new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.2f)); // (0.09f, 1.3f, -1.28f)
+        kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
+        tg_kulka.addChild(kolizja_kulki);
+        
+        
 
 
         return wezel_scena;
