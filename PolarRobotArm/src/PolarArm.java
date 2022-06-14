@@ -57,6 +57,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D przesuniecie_seg4 = new Transform3D();
     TransformGroup ramie_p1 = new TransformGroup();
     Transform3D przesuniecie_ram = new Transform3D();
+    TransformGroup chwytakTr = new TransformGroup();
+    Transform3D przesuniecie_chwytaka = new Transform3D();
     TransformGroup tg_kulka = new TransformGroup();
     Transform3D t3d_kulka = new Transform3D();
         
@@ -221,7 +223,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Sphere niebo = new Sphere(5.0f,
         Primitive.GENERATE_NORMALS_INWARD + Primitive.GENERATE_TEXTURE_COORDS,
         wyglad_niebo);
-        obrot_animacja.addChild(niebo);
+        //obrot_animacja.addChild(niebo);
         //Material wmaterial_daszek = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.3f,0.0f,0.3f),
           //                                   new Color3f(0.6f, 0.1f, 0.1f), new Color3f(1.0f, 0.5f, 0.5f), 80.0f);
         //wyglad_daszek.setMaterial(wmaterial_daszek);
@@ -438,10 +440,20 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
         
-        ramie_p2.setUserData("Ramie");
+        Appearance  wygladStozka = new Appearance();
+        Material stozek_mat = new Material(new Color3f(0.5f, 0.3f,0.2f), new Color3f(0.1f,0.1f,0.1f),
+                                                new Color3f(0.8f, 0.3f, 0.5f), new Color3f(1.0f, 1.0f, 1.0f),50.0f);
+        wygladStozka.setMaterial(stozek_mat);
+        Cylinder chwytak = new Cylinder(0.05f, 0.05f,wygladStozka);
+        chwytakTr.addChild(chwytak);
+        przesuniecie_chwytaka.set(new Vector3f(0.0f,(podstawa_szer+0.7f)/2,0.0f));
+        chwytakTr.setTransform(przesuniecie_chwytaka);
+        ramie_p2.addChild(chwytakTr);
         
-        kolizja_chwytaka = new CollisionDetectorGroup(ramie_p2,
-                new BoundingSphere(new Point3d(0.0f, 0f, -0.23f), 0.04f)); // (0.09f, 1.3f, -1.28f)
+        chwytakTr.setUserData("Chwytak");
+        
+        kolizja_chwytaka = new CollisionDetectorGroup(chwytakTr,
+                new BoundingSphere(new Point3d(0.0f, 0f, 0.1f), 0.04f)); // (0.09f, 1.3f, -1.28f)
         kolizja_chwytaka.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
         wezel_scena.addChild(kolizja_chwytaka);
 	    
@@ -470,8 +482,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(kulkaBranch);
         
         kolizja_kulki = new CollisionDetectorGroup(tg_kulka,
-                new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.2f)); // (0.09f, 1.3f, -1.28f)
-        kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
+                new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.1f)); // (0.09f, 1.3f, -1.28f)
+        kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.1f));
         tg_kulka.addChild(kolizja_kulki);
         
         
