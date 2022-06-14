@@ -81,6 +81,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean key_s;
     boolean key_q;
     boolean key_e;
+    boolean key_i;
+    boolean key_k;
     
     float wysuniecie=0.0f;
     float kat_wychylenia=0.0f;
@@ -88,6 +90,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     
     boolean gra_dzwiek = false;
+    boolean chwycona = false;
 
     PolarArm(){
          super("Polar Robot Arm");
@@ -451,6 +454,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ramie_p2.addChild(chwytakTr);
         
         chwytakTr.setUserData("Chwytak");
+        chwytakTr.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        chwytakTr.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        chwytakTr.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        chwytakTr.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         
         kolizja_chwytaka = new CollisionDetectorGroup(chwytakTr,
                 new BoundingSphere(new Point3d(0.0f, 0f, 0.1f), 0.04f)); // (0.09f, 1.3f, -1.28f)
@@ -572,6 +579,38 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
            ramie_p2.setTransform(przesuniecie_ramie2);
             
         }
+        if(key_i && kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja() && !chwycona){
+           
+            wezel_scena.removeChild(kulkaBranch);
+            chwytakTr.addChild(kulkaBranch);
+            //Transform3D t = new Transform3D();
+            akcja.set(new Vector3f(0.0f, 0.11f, 0.0f)); // przesuwam obiekt z orgin na miejsce
+            tg_kulka.setTransform(akcja);
+            chwycona = true;
+            
+        }
+        if(key_k && chwycona){
+            //Transform3D transform = new Transform3D(); 
+            Vector3f position = new Vector3f();
+            tg_kulka.getLocalToVworld(t3d_kulka); 
+            t3d_kulka.get(position);
+            float wysokosc = position.getZ();
+            chwytakTr.removeChild(kulkaBranch);
+            wezel_scena.addChild(kulkaBranch);
+            akcja.set(position);
+            tg_kulka.setTransform(akcja);
+            akcja.set(new Vector3f(0.0f, 0.11f, 0.0f));
+            t3d_kulka.mul(akcja);
+            tg_kulka.setTransform(t3d_kulka);
+            chwycona = false;
+            while(wysokosc>0){
+                akcja.set(new Vector3f(0.0f, 0.0f, 0.03f));
+                t3d_kulka.mul(akcja);
+                tg_kulka.setTransform(t3d_kulka);
+                wysokosc-=0.03;
+                czekaj();
+            }
+        }
         if((key_a || key_s || key_d || key_w || key_q ||key_e) && !gra_dzwiek){
             dzwiek(true);
             gra_dzwiek = true;
@@ -670,6 +709,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             case KeyEvent.VK_E:
                 key_e = true;
                 break;
+            case KeyEvent.VK_I:
+                key_i = true;
+                break;
+            case KeyEvent.VK_K:
+                key_k = true;
+                break;
         }
         wykonajRuch();
     }
@@ -693,6 +738,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_E:
                 key_e = false;
+                break;
+            case KeyEvent.VK_I:
+                key_i = false;
+                break;
+            case KeyEvent.VK_K:
+                key_k = false;
                 break;
         }
     }
