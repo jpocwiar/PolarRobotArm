@@ -312,6 +312,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ziemia.setAppearance(wyglad_ziemia);
         TransformGroup ziemiaTrans = new TransformGroup();
         ziemiaTrans.addChild(ziemia);
+        
+        ziemiaTrans.setUserData("ziemia");
 
         wezel_scena.addChild(ziemiaTrans);
         kolizja_podlogi = new CollisionDetectorGroup(ziemiaTrans,
@@ -435,6 +437,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Cylinder ramie2 = new Cylinder(0.03f,podstawa_szer+0.7f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
+        
+        ramie_p2.setUserData("Ramie");
         
         kolizja_chwytaka = new CollisionDetectorGroup(ramie_p2,
                 new BoundingSphere(new Point3d(0.0f, 0f, -0.23f), 0.04f)); // (0.09f, 1.3f, -1.28f)
