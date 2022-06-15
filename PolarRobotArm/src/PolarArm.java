@@ -542,12 +542,25 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
+            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
+               akcja.rotY(-Math.PI / 50);
+               kat_obrotu-=Math.PI / 50;
+               kat_obrotu%=2*Math.PI;
+               przesuniecie_seg2.mul(akcja);
+               segment2.setTransform(przesuniecie_seg2); 
+            }
         }
         if (key_w  && kat_wychylenia < Math.PI/4) {
             akcja.rotX(Math.PI / 100);
             kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
+            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
+                akcja.rotX(-Math.PI / 100);
+                kat_wychylenia-= Math.PI / 100;
+                przesuniecie_ram.mul(akcja);
+                ramie_p1.setTransform(przesuniecie_ram);
+            }
             
         }
         if (key_s  && kat_wychylenia > -Math.PI/4) {
@@ -555,6 +568,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
+            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
+                akcja.rotX(Math.PI / 100);
+                kat_wychylenia+= Math.PI / 100;
+                przesuniecie_ram.mul(akcja);
+                ramie_p1.setTransform(przesuniecie_ram);
+            }
             
         }
         if (key_d) {
@@ -563,6 +582,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
+            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
+                akcja.rotY(Math.PI / 50);
+                kat_obrotu+=Math.PI / 50;
+                kat_obrotu%=2*Math.PI;
+                przesuniecie_seg2.mul(akcja);
+                segment2.setTransform(przesuniecie_seg2);
+            }
             
         }
         if (key_q && wysuniecie<0.59f) {
@@ -570,6 +596,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             wysuniecie+=0.01f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
+            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
+                akcja.set(new Vector3f(0.0f,-0.01f,0.0f));
+                wysuniecie-=0.01f;
+                przesuniecie_ramie2.mul(akcja);
+                ramie_p2.setTransform(przesuniecie_ramie2);
+            }
             
         }
         if (key_e && wysuniecie > 0.01f) {
@@ -590,24 +622,32 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             
         }
         if(key_k && chwycona){
-            //Transform3D transform = new Transform3D(); 
+            
             Vector3f position = new Vector3f();
             tg_kulka.getLocalToVworld(t3d_kulka); 
+            //akcja.mul(przesuniecie_seg2);
+            //akcja.mul(przesuniecie_ram);
+            //akcja.mul(przesuniecie_seg2);
             t3d_kulka.get(position);
-            float wysokosc = position.getZ();
+            float wysokosc = position.getY();
             chwytakTr.removeChild(kulkaBranch);
             wezel_scena.addChild(kulkaBranch);
             akcja.set(position);
+            
+            //akcja.mul(przesuniecie_ram);
             tg_kulka.setTransform(akcja);
+            akcja.rotX(-kat_wychylenia);
+            t3d_kulka.mul(akcja);
             akcja.set(new Vector3f(0.0f, 0.11f, 0.0f));
             t3d_kulka.mul(akcja);
+            //t3d_kulka.mul(przesuniecie_ram);
             tg_kulka.setTransform(t3d_kulka);
             chwycona = false;
-            while(wysokosc>0){
-                akcja.set(new Vector3f(0.0f, 0.0f, 0.03f));
+            while(wysokosc>0.12){
+                akcja.set(new Vector3f(0.0f, 0.00f, 0.04f));
                 t3d_kulka.mul(akcja);
                 tg_kulka.setTransform(t3d_kulka);
-                wysokosc-=0.03;
+                wysokosc-=0.04;
                 czekaj();
             }
         }
