@@ -263,10 +263,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         lightD.setDirection(new Vector3f(0.0f, 0.0f, -1.0f));
         lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
         wezel_scena.addChild(lightD);
-
-
         wyglad_ziemia.setTexture(podloga);
         wyglad_mury.setTexture(murek);
+
+/*
+        
 
         Point3f[]  coords = new Point3f[4];
         for(i = 0; i< 4; i++)
@@ -319,14 +320,22 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ziemiaTrans.addChild(ziemia);
         
         ziemiaTrans.setUserData("ziemia");
-
-        wezel_scena.addChild(ziemiaTrans);
-        kolizja_podlogi = new CollisionDetectorGroup(ziemiaTrans,
-                new BoundingBox(new Point3d(-10.0f, -0.01f, -10.23f), new Point3d(10.0f, 0f, 10.23f)));
+        */
+        //wezel_scena.addChild(ziemiaTrans);
+        //
+        float ziemia_wys = 0.02f;
+        float ziemia_szer = 5.0f;
+        Box ziemia = new Box(ziemia_szer, ziemia_wys, ziemia_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_ziemia);
+        Transform3D przesuniecie_ziemi = new Transform3D();
+        przesuniecie_ziemi.setTranslation(new Vector3f(0.0f, -ziemia_wys, 0.0f));
+        TransformGroup ziemia_trans = new TransformGroup(przesuniecie_ziemi);
+        ziemia_trans.addChild(ziemia);
+        wezel_scena.addChild(ziemia_trans);
+        kolizja_podlogi = new CollisionDetectorGroup(ziemia_trans,
+        new BoundingBox(new Point3d(-ziemia_szer, -0.05f, -ziemia_szer), new Point3d(ziemia_szer, -0.01f, ziemia_szer)));
         kolizja_podlogi.setSchedulingBounds(new BoundingSphere(new Point3d(), 20f));
         wezel_scena.addChild(kolizja_podlogi);
-        
-
+        ziemia_trans.setUserData("ziemia");
         //podstawa
         float podstawa_szer = 0.3f;
         //float podstawa_dl = 0.4f;
@@ -460,7 +469,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         chwytakTr.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         
         kolizja_chwytaka = new CollisionDetectorGroup(chwytakTr,
-                new BoundingSphere(new Point3d(0.0f, 0f, 0.1f), 0.04f)); // (0.09f, 1.3f, -1.28f)
+                new BoundingSphere(new Point3d(0.0f, 0.0f, 0.1f), 0.03f)); // (0.09f, 1.3f, -1.28f)
         kolizja_chwytaka.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
         wezel_scena.addChild(kolizja_chwytaka);
 	    
@@ -531,6 +540,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         }
     }
     
+    public boolean sprawdzanieKolizji(){
+        if((!chwycona && (kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja() || kolizja_chwytaka.czyKolizja() && kolizja_podlogi.czyKolizja())) || chwycona && kolizja_podlogi.czyKolizja()){
+            return true;
+        }
+        else return false;
+    }
+    
     public void wykonajRuch(){
         
         
@@ -542,9 +558,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
-               akcja.rotY(-Math.PI / 50);
-               kat_obrotu-=Math.PI / 50;
+            if(sprawdzanieKolizji()){
+               akcja.rotY(-Math.PI / 25);
+               kat_obrotu-=Math.PI / 25;
                kat_obrotu%=2*Math.PI;
                przesuniecie_seg2.mul(akcja);
                segment2.setTransform(przesuniecie_seg2); 
@@ -555,9 +571,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
-            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
-                akcja.rotX(-Math.PI / 100);
-                kat_wychylenia-= Math.PI / 100;
+            if(sprawdzanieKolizji()){
+                akcja.rotX(-Math.PI / 25);
+                kat_wychylenia-= Math.PI / 25;
                 przesuniecie_ram.mul(akcja);
                 ramie_p1.setTransform(przesuniecie_ram);
             }
@@ -568,9 +584,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
-            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
-                akcja.rotX(Math.PI / 100);
-                kat_wychylenia+= Math.PI / 100;
+            if(sprawdzanieKolizji()){
+                akcja.rotX(Math.PI / 25);
+                kat_wychylenia+= Math.PI / 25;
                 przesuniecie_ram.mul(akcja);
                 ramie_p1.setTransform(przesuniecie_ram);
             }
@@ -582,9 +598,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
-                akcja.rotY(Math.PI / 50);
-                kat_obrotu+=Math.PI / 50;
+            if(sprawdzanieKolizji()){
+                akcja.rotY(Math.PI / 25);
+                kat_obrotu+=Math.PI / 25;
                 kat_obrotu%=2*Math.PI;
                 przesuniecie_seg2.mul(akcja);
                 segment2.setTransform(przesuniecie_seg2);
@@ -596,7 +612,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             wysuniecie+=0.01f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
-            if(kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja()){
+            if(sprawdzanieKolizji()){
                 akcja.set(new Vector3f(0.0f,-0.01f,0.0f));
                 wysuniecie-=0.01f;
                 przesuniecie_ramie2.mul(akcja);
