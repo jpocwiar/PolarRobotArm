@@ -48,33 +48,46 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     JTextArea textObrot2 = new JTextArea();
     JTextArea textWysuniecie = new JTextArea();
     
-    TransformGroup segment = new TransformGroup();
-    Transform3D przesuniecie_seg = new Transform3D();
-    TransformGroup segment2 = new TransformGroup();
     Transform3D przesuniecie_seg2 = new Transform3D();
-    TransformGroup segment3 = new TransformGroup();
+    Transform3D przesuniecie_seg = new Transform3D();
     Transform3D przesuniecie_seg3 = new Transform3D();
-    TransformGroup segment4 = new TransformGroup();
     Transform3D przesuniecie_seg4 = new Transform3D();
-    TransformGroup ramie_p1 = new TransformGroup();
     Transform3D przesuniecie_ram = new Transform3D();
-    TransformGroup chwytakTr = new TransformGroup();
     Transform3D przesuniecie_chwytaka = new Transform3D();
-    TransformGroup tg_kulka = new TransformGroup();
     Transform3D t3d_kulka = new Transform3D();
-        
-    TransformGroup segment5 = new TransformGroup();
     Transform3D przesuniecie_seg5 = new Transform3D();
-    TransformGroup ramie_p2 = new TransformGroup();
     Transform3D przesuniecie_ramie2 = new Transform3D();
+    
+    TransformGroup segment = new TransformGroup();
+    TransformGroup segment2 = new TransformGroup();
+    TransformGroup segment3 = new TransformGroup();
+    TransformGroup segment4 = new TransformGroup();
+    TransformGroup ramie_p1 = new TransformGroup();
+    TransformGroup chwytakTr = new TransformGroup();
+    TransformGroup tg_kulka = new TransformGroup();
+    TransformGroup segment5 = new TransformGroup();  
+    TransformGroup ramie_p2 = new TransformGroup();
+    
 	
-    Transform3D tg_kulka_nag = new Transform3D();
+    Transform3D nag_przesuniecie_seg = new Transform3D();  
+    Transform3D nag_przesuniecie_seg2 = new Transform3D();
+    Transform3D nag_przesuniecie_seg3 = new Transform3D();
+    Transform3D nag_przesuniecie_seg4 = new Transform3D();
+    Transform3D nag_przesuniecie_seg5 = new Transform3D();
+    Transform3D nag_przesuniecie_ram = new Transform3D();
+    Transform3D nag_przesuniecie_ramie2 = new Transform3D();
+    Transform3D nag_przesuniecie_chwytaka = new Transform3D();
+    Transform3D nag_t3d_kulka = new Transform3D();
 
     BranchGroup kulkaBranch = new BranchGroup();
     
     CollisionDetectorGroup kolizja_kulki;
     CollisionDetectorGroup kolizja_chwytaka;
     CollisionDetectorGroup kolizja_podlogi;
+    
+    boolean nagrywanie;
+    boolean odtwarzanie;
+    Vector<KeyEvent> nagrane_przyciski = new Vector<KeyEvent>();
     
     boolean key_a;
     boolean key_d;
@@ -88,6 +101,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     float wysuniecie=0.0f;
     float kat_wychylenia=0.0f;
     float kat_obrotu=0.0f;
+    
+    float nag_wysuniecie=0.0f;
+    float nag_kat_wychylenia=0.0f;
+    float nag_kat_obrotu=0.0f;
     
     
     boolean gra_dzwiek = false;
@@ -716,6 +733,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
     }
 
+    
     public void actionPerformed(ActionEvent e) {
         KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
         KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
@@ -772,6 +790,87 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             }
             
         }
+        //reset kamery realizowany przez przesunięcie obserwatora na wartość domyślną
+        if (e.getSource() == reset_kamery) {
+            Transform3D t = new Transform3D();
+            Transform3D przesuniecie_obserwatora = new Transform3D();
+            przesuniecie_obserwatora.set(new Vector3f(0.0f, 0.0f, 12.0f));
+            przesuniecie_obserwatora.mul(t);
+
+            simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
+        }
+
+        // obsługa zdarzenia nagrywania. Jeżeli nagrywamy to usuwamy poprzednie nagranie oraz zapamiętujemy pozycje początkową
+        if (e.getSource() == zacznij_nagrywanie) {
+
+            nagrane_przyciski.clear();
+          
+            nag_przesuniecie_seg.set(przesuniecie_seg);
+            nag_przesuniecie_seg2.set(przesuniecie_seg2);
+            nag_przesuniecie_seg3.set(przesuniecie_seg3);
+            nag_przesuniecie_seg4.set(przesuniecie_seg4);
+            nag_przesuniecie_seg5.set(przesuniecie_seg5);
+            nag_przesuniecie_ram.set(przesuniecie_ram);
+            nag_przesuniecie_ramie2.set(przesuniecie_ramie2);
+            nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
+            nag_t3d_kulka.set(t3d_kulka);
+
+
+            nag_wysuniecie = wysuniecie;
+            nag_kat_wychylenia = kat_wychylenia;
+            nag_kat_obrotu = kat_obrotu;
+            nagrywanie = true;
+        }
+
+        if (e.getSource() == zakoncz_nagrywanie) {
+            nagrywanie = false;
+        }
+
+        //gdy odtwarzamy nagranie to wracamy do zapamiętanej pozycji początkowej i realizujemy ruchy zapisane w wektorze
+        //nagranej sekwencji przycisków klawiatury
+        if (e.getSource() == odtworz_nagranie) {
+            nagrywanie = false;
+            odtwarzanie = true;
+
+            przesuniecie_seg.set(nag_przesuniecie_seg);
+            przesuniecie_seg2.set(nag_przesuniecie_seg2);
+            przesuniecie_seg3.set(nag_przesuniecie_seg3);
+            przesuniecie_seg4.set(nag_przesuniecie_seg4);
+            przesuniecie_seg5.set(nag_przesuniecie_seg5);
+            przesuniecie_ram.set(nag_przesuniecie_ram);
+            przesuniecie_ramie2.set(nag_przesuniecie_ramie2);
+            przesuniecie_chwytaka.set(nag_przesuniecie_chwytaka);
+            t3d_kulka.set(nag_t3d_kulka);
+        
+            segment.setTransform(nag_przesuniecie_seg);
+            segment2.setTransform(nag_przesuniecie_seg2);
+            segment3.setTransform(nag_przesuniecie_seg3);
+            segment4.setTransform(nag_przesuniecie_seg4);
+            segment5.setTransform(nag_przesuniecie_seg5);
+            ramie_p1.setTransform(nag_przesuniecie_ram);
+            ramie_p2.setTransform(nag_przesuniecie_ramie2);
+            chwytakTr.setTransform(nag_przesuniecie_chwytaka);
+            tg_kulka.setTransform(nag_t3d_kulka);
+
+            wysuniecie = nag_wysuniecie;
+            kat_wychylenia = nag_kat_wychylenia;
+            kat_obrotu = nag_kat_obrotu;
+
+            System.out.println(nagrane_przyciski.size());
+
+            for (int i = 0; i < nagrane_przyciski.size(); i++) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+
+                keyPressed(nagrane_przyciski.elementAt(i));
+                keyReleased(nagrane_przyciski.elementAt(i));
+            }
+
+            odtwarzanie = false;
+        }
     }
 
     public void keyTyped(KeyEvent e) {
@@ -779,37 +878,55 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
+        Button a = new Button("click");
+        KeyEvent key_A = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_A, 'A');
+        KeyEvent key_D = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_D, 'D');
+        KeyEvent key_W = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_W, 'W');
+        KeyEvent key_S = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_S, 'S');
+        KeyEvent key_Q = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_R, 'R');
+        KeyEvent key_E = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_F, 'F');
+        KeyEvent key_I = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_T, 'T');
+        KeyEvent key_K = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_G, 'G');
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_A: 
-                
+            case KeyEvent.VK_A:                
                 key_a = true;
+                nagrane_przyciski.add(key_A);
                 break;
             case KeyEvent.VK_D:
                 key_d = true;
+                nagrane_przyciski.add(key_D);
                 break;
             case KeyEvent.VK_W: 
+                nagrane_przyciski.add(key_W);
                 key_w = true;
                 break;
             case KeyEvent.VK_S:
+                nagrane_przyciski.add(key_S);
                 key_s = true;
                 break;
             case KeyEvent.VK_Q:
+                nagrane_przyciski.add(key_Q);
                 key_q = true;
                 break;
             case KeyEvent.VK_E:
+                nagrane_przyciski.add(key_E);
                 key_e = true;
                 break;
             case KeyEvent.VK_I:
+                nagrane_przyciski.add(key_I);
                 key_i = true;
                 break;
             case KeyEvent.VK_K:
+                nagrane_przyciski.add(key_K);
                 key_k = true;
                 break;
         }
+        
         wykonajRuch();
     }
 
     public void keyReleased(KeyEvent e) {
+
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:
                 key_a = false;
