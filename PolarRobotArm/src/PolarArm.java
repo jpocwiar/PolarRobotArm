@@ -28,6 +28,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+
 public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
    
@@ -102,7 +103,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         GraphicsConfiguration config =
            SimpleUniverse.getPreferredConfiguration();
-
+        
+        
         Canvas3D canvas3D = new Canvas3D(config);
         canvas3D.setPreferredSize(new Dimension(1280,720));
         canvas3D.addKeyListener(this);
@@ -110,6 +112,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
+
         add(BorderLayout.NORTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
@@ -154,6 +157,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     public JPanel stworzPanelPrzyciskow() {
         JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
+                muzyka(true);
 
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
@@ -507,13 +511,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         
 
-
         return wezel_scena;
 
 
     }
 
     public static void main(String args[]){
+        
       new PolarArm();
 
    }
@@ -525,6 +529,25 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             Thread.currentThread().interrupt();
       }
     }
+    // muzyka w tle
+    public void muzyka(boolean czy){
+        try {
+        AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("src\\dzwiek6.mid").getAbsoluteFile());
+        javax.sound.sampled.Clip dziw = AudioSystem.getClip();
+        dziw.open(muzyka);
+        if(czy) {
+            dziw.start();
+            }
+        else{
+            dziw.stop();
+        }
+        
+        } catch(Exception ex) {
+            System.out.println("Nie można odtworzyć dźwięku");
+            ex.printStackTrace();
+        }
+    }
+    
     public void dzwiek(boolean czy){
         try {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src\\dzwiek2.wav").getAbsoluteFile());
@@ -685,6 +708,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             dzwiek(false);
             gra_dzwiek = false;
         }
+        
         textObrot1.setText(String.format("%.2f", kat_obrotu/Math.PI*180));
         textObrot2.setText(String.format("%.2f", kat_wychylenia/Math.PI*180));
         textWysuniecie.setText(String.format("%.2f", wysuniecie/0.6 * 100));
@@ -812,6 +836,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 key_k = false;
                 break;
         }
+        // teraz przy każdym ruchu bedzie dzwiek
+        gra_dzwiek = false;
     }
 
 }
