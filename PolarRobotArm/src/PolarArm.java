@@ -112,6 +112,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     
     char ostatni_klawisz = '0';
+    
+    javax.sound.sampled.Clip clip;
 
     PolarArm(){
          super("Polar Robot Arm");
@@ -174,7 +176,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     public JPanel stworzPanelPrzyciskow() {
         JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
-                muzyka(true);
+                muzyka(false);
 
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
@@ -568,7 +570,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     public void dzwiek(boolean czy){
         try {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src\\dzwiek2.wav").getAbsoluteFile());
-        javax.sound.sampled.Clip clip = AudioSystem.getClip();
+        clip = AudioSystem.getClip();
         clip.open(audioInputStream);
         if(czy) {
             clip.start();
@@ -790,15 +792,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             }
             
         }
-        //reset kamery realizowany przez przesunięcie obserwatora na wartość domyślną
-        if (e.getSource() == reset_kamery) {
-            Transform3D t = new Transform3D();
-            Transform3D przesuniecie_obserwatora = new Transform3D();
-            przesuniecie_obserwatora.set(new Vector3f(0.0f, 0.0f, 12.0f));
-            przesuniecie_obserwatora.mul(t);
-
-            simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
-        }
+        
 
         // obsługa zdarzenia nagrywania. Jeżeli nagrywamy to usuwamy poprzednie nagranie oraz zapamiętujemy pozycje początkową
         if (e.getSource() == zacznij_nagrywanie) {
@@ -955,6 +949,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         }
         // teraz przy każdym ruchu bedzie dzwiek
         gra_dzwiek = false;
+        clip.stop();
     }
 
 }
