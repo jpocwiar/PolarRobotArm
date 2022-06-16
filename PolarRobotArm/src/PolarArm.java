@@ -394,6 +394,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         segment.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment3.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment4.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment5.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
         ramie_p1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         ramie_p2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
@@ -872,46 +873,45 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        Button a = new Button("click");
-        KeyEvent key_A = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_A, 'A');
-        KeyEvent key_D = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_D, 'D');
-        KeyEvent key_W = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_W, 'W');
-        KeyEvent key_S = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_S, 'S');
-        KeyEvent key_Q = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_R, 'R');
-        KeyEvent key_E = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_F, 'F');
-        KeyEvent key_I = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_T, 'T');
-        KeyEvent key_K = new KeyEvent(a, 1, 20, 1, KeyEvent.VK_G, 'G');
+        KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
+        KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
+        KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
+        KeyEvent klawisz_D = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_D, 'D');
+        KeyEvent klawisz_W = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_W, 'W');
+        KeyEvent klawisz_S = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_S, 'S');
+        KeyEvent klawisz_I = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_I, 'I');
+        KeyEvent klawisz_K = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_K, 'K');
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:                
                 key_a = true;
-                nagrane_przyciski.add(key_A);
+                nagrane_przyciski.add(klawisz_A);
                 break;
             case KeyEvent.VK_D:
                 key_d = true;
-                nagrane_przyciski.add(key_D);
+                nagrane_przyciski.add(klawisz_D);
                 break;
             case KeyEvent.VK_W: 
-                nagrane_przyciski.add(key_W);
+                nagrane_przyciski.add(klawisz_W);
                 key_w = true;
                 break;
             case KeyEvent.VK_S:
-                nagrane_przyciski.add(key_S);
+                nagrane_przyciski.add(klawisz_S);
                 key_s = true;
                 break;
             case KeyEvent.VK_Q:
-                nagrane_przyciski.add(key_Q);
+                nagrane_przyciski.add(klawisz_Q);
                 key_q = true;
                 break;
             case KeyEvent.VK_E:
-                nagrane_przyciski.add(key_E);
+                nagrane_przyciski.add(klawisz_E);
                 key_e = true;
                 break;
             case KeyEvent.VK_I:
-                nagrane_przyciski.add(key_I);
+                nagrane_przyciski.add(klawisz_I);
                 key_i = true;
                 break;
             case KeyEvent.VK_K:
-                nagrane_przyciski.add(key_K);
+                nagrane_przyciski.add(klawisz_K);
                 key_k = true;
                 break;
         }
