@@ -91,6 +91,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     boolean gra_dzwiek = false;
     boolean chwycona = false;
+    
+    
+    char ostatni_klawisz = '0';
 
     PolarArm(){
          super("Polar Robot Arm");
@@ -553,72 +556,79 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Transform3D akcja = new Transform3D();
         
         if (key_a) {
+            
             akcja.rotY(Math.PI / 100);
             kat_obrotu+=Math.PI / 100;
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            if(sprawdzanieKolizji()){
-               akcja.rotY(-Math.PI / 25);
-               kat_obrotu-=Math.PI / 25;
+            if(sprawdzanieKolizji() && ostatni_klawisz == 'a'){
+               akcja.rotY(-Math.PI / 100);
+               kat_obrotu-=Math.PI / 100;
                kat_obrotu%=2*Math.PI;
                przesuniecie_seg2.mul(akcja);
                segment2.setTransform(przesuniecie_seg2); 
             }
+            ostatni_klawisz = 'a';
         }
         if (key_w  && kat_wychylenia < Math.PI/4) {
+            
             akcja.rotX(Math.PI / 100);
             kat_wychylenia+= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
-            if(sprawdzanieKolizji()){
-                akcja.rotX(-Math.PI / 25);
-                kat_wychylenia-= Math.PI / 25;
+            if(sprawdzanieKolizji() && ostatni_klawisz == 'w'){
+                akcja.rotX(-Math.PI / 100);
+                kat_wychylenia-= Math.PI / 100;
                 przesuniecie_ram.mul(akcja);
                 ramie_p1.setTransform(przesuniecie_ram);
             }
-            
+            ostatni_klawisz = 'w';
         }
         if (key_s  && kat_wychylenia > -Math.PI/4) {
+            
             akcja.rotX(-Math.PI / 100);
             kat_wychylenia-= Math.PI / 100;
             przesuniecie_ram.mul(akcja);
             ramie_p1.setTransform(przesuniecie_ram);
-            if(sprawdzanieKolizji()){
-                akcja.rotX(Math.PI / 25);
-                kat_wychylenia+= Math.PI / 25;
+            if(sprawdzanieKolizji() && ostatni_klawisz == 's'){
+                akcja.rotX(Math.PI / 100);
+                kat_wychylenia+= Math.PI / 100;
                 przesuniecie_ram.mul(akcja);
                 ramie_p1.setTransform(przesuniecie_ram);
             }
-            
+            ostatni_klawisz = 's';
         }
         if (key_d) {
+            
             akcja.rotY(-Math.PI / 100);
             kat_obrotu-=Math.PI / 100;
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            if(sprawdzanieKolizji()){
-                akcja.rotY(Math.PI / 25);
-                kat_obrotu+=Math.PI / 25;
+            if(sprawdzanieKolizji() && ostatni_klawisz == 'd'){
+                akcja.rotY(Math.PI / 100);
+                kat_obrotu+=Math.PI / 100;
                 kat_obrotu%=2*Math.PI;
                 przesuniecie_seg2.mul(akcja);
                 segment2.setTransform(przesuniecie_seg2);
             }
+            ostatni_klawisz = 'd';
             
         }
         if (key_q && wysuniecie<0.59f) {
+            
             akcja.set(new Vector3f(0.0f,0.01f,0.0f));
             wysuniecie+=0.01f;
             przesuniecie_ramie2.mul(akcja);
             ramie_p2.setTransform(przesuniecie_ramie2);
-            if(sprawdzanieKolizji()){
+            if(sprawdzanieKolizji() && ostatni_klawisz == 'q'){
                 akcja.set(new Vector3f(0.0f,-0.01f,0.0f));
                 wysuniecie-=0.01f;
                 przesuniecie_ramie2.mul(akcja);
                 ramie_p2.setTransform(przesuniecie_ramie2);
             }
-            
+            ostatni_klawisz = 'q';
         }
         if (key_e && wysuniecie > 0.01f) {
            akcja.set(new Vector3f(0.0f,-0.01f,0.0f));
