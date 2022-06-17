@@ -397,7 +397,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         przesuniecie_seg2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2/2,0.0f));
         segment2.setTransform(przesuniecie_seg2);
 
-        Cylinder walec2 = new Cylinder(podstawa_szer-0.15f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
+        Cylinder walec2 = new Cylinder(podstawa_szer-0.2f,wys_seg2,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_mury);
         segment2.addChild(walec2);
         wezel_scena.addChild(segment2);
         
