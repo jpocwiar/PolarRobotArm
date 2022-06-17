@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 
@@ -244,7 +245,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         RotationInterpolator obracacz = new RotationInterpolator(alpha_animacja, obrot_animacja);
    
         
-        BoundingSphere bounds = new BoundingSphere();
+        BoundingSphere bounds = new BoundingSphere(new Point3d(0f,0f,0f),5f);
         obracacz.setSchedulingBounds(bounds);
         obrot_animacja.addChild(obracacz);
 
@@ -322,11 +323,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         lightA.setInfluencingBounds(bounds);
         wezel_scena.addChild(lightA);
 
-        DirectionalLight lightD = new DirectionalLight();
-        lightD.setInfluencingBounds(bounds);
-        lightD.setDirection(new Vector3f(0.0f, 0.0f, -1.0f));
-        lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
-        wezel_scena.addChild(lightD);
+        
+        PointLight swiatlo_pkt = new PointLight(new Color3f(1.0f, 1.0f, 1.0f), new Point3f(0f,2.0f,2.0f), new Point3f(0.1f,0.1f,0.1f));
+        PointLight swiatlo_pkt2 = new PointLight(new Color3f(1.0f, 1.0f, 1.0f), new Point3f(0f,2.0f,-2.0f), new Point3f(0.1f,0.1f,0.1f));
+        swiatlo_pkt.setInfluencingBounds(bounds);
+        swiatlo_pkt2.setInfluencingBounds(bounds);
+        wezel_scena.addChild(swiatlo_pkt);
+        wezel_scena.addChild(swiatlo_pkt2);
         wyglad_ziemia.setTexture(podloga);
         wyglad_mury.setTexture(murek);
 
@@ -461,8 +464,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ramie_p1.addChild(ramie_p2);
         
         Appearance  wygladStozka = new Appearance();
-        Material stozek_mat = new Material(new Color3f(0.5f, 0.3f,0.2f), new Color3f(0.1f,0.1f,0.1f),
-                                                new Color3f(0.8f, 0.3f, 0.5f), new Color3f(1.0f, 1.0f, 1.0f),50.0f);
+        Material stozek_mat = new Material(new Color3f(0.0f, 0.0f,0.1f), new Color3f(0.0f,0.1f,0.1f),
+                                                new Color3f(0.3f, 0.3f, 0.3f), new Color3f(1.0f, 1.0f, 1.0f),10.0f);
         wygladStozka.setMaterial(stozek_mat);
         Cylinder chwytak = new Cylinder(0.05f, 0.05f,wygladStozka);
         chwytakTr.addChild(chwytak);
@@ -482,7 +485,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(kolizja_chwytaka);
 	    
 	/// kulka 
-     	Material material_kulki = new Material(new Color3f(0.5f, 0.3f,0.2f), new Color3f(0.1f,0.1f,0.1f),
+     	Material material_kulki = new Material(new Color3f(0.5f, 0.3f,0.8f), new Color3f(0.1f,0.1f,0.1f),
                                                 new Color3f(0.8f, 0.3f, 0.5f), new Color3f(0.1f, 0.1f, 0.1f), 20.0f);
 
         Appearance wyglad_kulki = new Appearance();
@@ -491,7 +494,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Transform3D t3d_przesuniecie = new Transform3D();
         kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        t3d_przesuniecie.set(new Vector3f(0.0f, 0.2f, 1.0f)); // przesuwam obiekt z orgin na miejsce
+        t3d_przesuniecie.set(new Vector3f(0.0f, 0.1f, 1.0f)); // przesuwam obiekt z orgin na miejsce
         kulka_trans3D.mul(t3d_przesuniecie);
         kulka_p.setTransform(t3d_przesuniecie);
         Sphere kulka = new Sphere(0.1f, wyglad_kulki);
