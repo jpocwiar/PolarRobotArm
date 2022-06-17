@@ -1,3 +1,5 @@
+import com.sun.j3d.loaders.Scene;
+import com.sun.j3d.loaders.objectfile.ObjectFile;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.image.TextureLoader;
@@ -54,6 +56,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D przesuniecie_chwytaka = new Transform3D();
     Transform3D kulka_trans3D = new Transform3D();
     Transform3D przesuniecie_seg5 = new Transform3D();
+    Transform3D przesuniecie_seg6 = new Transform3D();
     Transform3D przesuniecie_ramie2 = new Transform3D();
     
     TransformGroup segment = new TransformGroup();
@@ -63,8 +66,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup ramie_p1 = new TransformGroup();
     TransformGroup chwytakTr = new TransformGroup();
     TransformGroup kulka_p = new TransformGroup();
-    TransformGroup segment5 = new TransformGroup();  
+    TransformGroup segment5 = new TransformGroup();
+    TransformGroup segment6 = new TransformGroup();
     TransformGroup ramie_p2 = new TransformGroup();
+    TransformGroup silnik_t = new TransformGroup();
     
 	
     Transform3D nag_przesuniecie_seg = new Transform3D();  
@@ -72,10 +77,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D nag_przesuniecie_seg3 = new Transform3D();
     Transform3D nag_przesuniecie_seg4 = new Transform3D();
     Transform3D nag_przesuniecie_seg5 = new Transform3D();
+    Transform3D nag_przesuniecie_seg6 = new Transform3D();
     Transform3D nag_przesuniecie_ram = new Transform3D();
     Transform3D nag_przesuniecie_ramie2 = new Transform3D();
     Transform3D nag_przesuniecie_chwytaka = new Transform3D();
     Transform3D nag_kulka_trans3D = new Transform3D();
+    Transform3D przesuniecie_silnika = new Transform3D();
 
     BranchGroup kulkaBranch = new BranchGroup();
     
@@ -423,6 +430,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         segment4.addChild(walec4);
         segment2.addChild(segment4);
         
+        
         //główne ramię
         
         Box ramie1 = new Box(podstawa_szer-0.2f, podstawa_wys, podstawa_szer+0.1f, Box.GENERATE_TEXTURE_COORDS, wyglad_mury);
@@ -444,6 +452,32 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Texture tekstura_alum = new TextureLoader("obrazki/alum.jpg", this).getTexture();
         wyglad_alum.setTexture(tekstura_alum);
         
+        segment6.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment6.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        przesuniecie_seg6.set(new Vector3f(0.0f,-0.01f,-0.4f));
+        przesuniecie_seg6.mul(tmp_rot);
+        segment6.setTransform(przesuniecie_seg6);
+        Cylinder walec6 = new Cylinder(0.08f,podstawa_szer-0.09f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
+        segment6.addChild(walec6);
+        ramie_p1.addChild(segment6);
+        /*
+        ObjectFile object = new ObjectFile();
+        Scene silnik = null;
+        File file = new java.io.File("src/chwytakv2.obj");
+        try {
+            silnik = object.load(file.toURI().toURL());
+        } catch (Exception e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+        silnik_t.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        silnik_t.addChild(silnik.getSceneGroup());
+        przesuniecie_silnika.set(new Vector3f(0.5f, -0.01f, -0.2f)); 
+        przesuniecie_silnika.setScale(1f);
+
+        silnik_t.setTransform(przesuniecie_silnika);
+        ramie_p1.addChild(silnik_t);
+        */
         //ten aluminiowy walec, wokół którego będzie wykonywany obrót w górę i w dół
         
         przesuniecie_seg5.set(new Vector3f(0.0f,0.0f,0.0f));
@@ -780,6 +814,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 nag_przesuniecie_seg3.set(przesuniecie_seg3);
                 nag_przesuniecie_seg4.set(przesuniecie_seg4);
                 nag_przesuniecie_seg5.set(przesuniecie_seg5);
+                nag_przesuniecie_seg6.set(przesuniecie_seg6);
                 nag_przesuniecie_ram.set(przesuniecie_ram);
                 nag_przesuniecie_ramie2.set(przesuniecie_ramie2);
                 nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
@@ -824,6 +859,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             przesuniecie_seg3.set(nag_przesuniecie_seg3);
             przesuniecie_seg4.set(nag_przesuniecie_seg4);
             przesuniecie_seg5.set(nag_przesuniecie_seg5);
+            przesuniecie_seg6.set(nag_przesuniecie_seg6);
             przesuniecie_ram.set(nag_przesuniecie_ram);
             przesuniecie_ramie2.set(nag_przesuniecie_ramie2);
             przesuniecie_chwytaka.set(nag_przesuniecie_chwytaka);
@@ -834,6 +870,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             segment3.setTransform(nag_przesuniecie_seg3);
             segment4.setTransform(nag_przesuniecie_seg4);
             segment5.setTransform(nag_przesuniecie_seg5);
+            segment6.setTransform(nag_przesuniecie_seg6);
             ramie_p1.setTransform(nag_przesuniecie_ram);
             ramie_p2.setTransform(nag_przesuniecie_ramie2);
             chwytakTr.setTransform(nag_przesuniecie_chwytaka);
