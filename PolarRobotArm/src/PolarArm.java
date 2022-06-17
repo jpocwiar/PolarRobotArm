@@ -463,11 +463,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
         
-        Appearance  wygladStozka = new Appearance();
-        Material stozek_mat = new Material(new Color3f(0.0f, 0.0f,0.1f), new Color3f(0.0f,0.1f,0.1f),
-                                                new Color3f(0.3f, 0.3f, 0.3f), new Color3f(1.0f, 1.0f, 1.0f),10.0f);
-        wygladStozka.setMaterial(stozek_mat);
-        Cylinder chwytak = new Cylinder(0.05f, 0.05f,wygladStozka);
+        Appearance  wyglad_chwytaka = new Appearance();
+        Material chwytak_mat = new Material(new Color3f(0.0f, 0.0f,0.1f), new Color3f(0.0f,0.1f,0.1f),
+                                                new Color3f(0.3f, 0.3f, 0.3f), new Color3f(1.0f, 1.0f, 1.0f),100.0f);
+        wyglad_chwytaka.setMaterial(chwytak_mat);
+        Cylinder chwytak = new Cylinder(0.05f, 0.05f,wyglad_chwytaka);
         chwytakTr.addChild(chwytak);
         przesuniecie_chwytaka.set(new Vector3f(0.0f,(podstawa_szer+0.7f)/2,0.0f));
         chwytakTr.setTransform(przesuniecie_chwytaka);
@@ -491,12 +491,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Appearance wyglad_kulki = new Appearance();
         wyglad_kulki.setMaterial(material_kulki);
 
-        Transform3D t3d_przesuniecie = new Transform3D();
+        Transform3D przesuniecie_kulki = new Transform3D();
         kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        t3d_przesuniecie.set(new Vector3f(0.0f, 0.1f, 1.0f)); // przesuwam obiekt z orgin na miejsce
-        kulka_trans3D.mul(t3d_przesuniecie);
-        kulka_p.setTransform(t3d_przesuniecie);
+        przesuniecie_kulki.set(new Vector3f(0.0f, 0.1f, 1.0f)); // przesuwam obiekt z orgin na miejsce
+        kulka_trans3D.mul(przesuniecie_kulki);
+        kulka_p.setTransform(przesuniecie_kulki);
         Sphere kulka = new Sphere(0.1f, wyglad_kulki);
         kulka_p.addChild(kulka);
         kulka_p.setUserData("kulka");
