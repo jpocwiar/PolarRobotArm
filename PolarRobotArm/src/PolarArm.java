@@ -35,8 +35,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     OrbitBehavior orbita;
 
     JButton reset_kamery = new JButton();
-    JButton zacznij_nagrywanie = new JButton();
-    JButton zakoncz_nagrywanie = new JButton();
+    JButton nagrywaj = new JButton();
+    JButton muzykaOnOff = new JButton();
     JButton odtworz_nagranie = new JButton();
     JButton ustawKoordynaty = new JButton();
 
@@ -50,7 +50,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D przesuniecie_seg4 = new Transform3D();
     Transform3D przesuniecie_ram = new Transform3D();
     Transform3D przesuniecie_chwytaka = new Transform3D();
-    Transform3D t3d_kulka = new Transform3D();
+    Transform3D kulka_trans3D = new Transform3D();
     Transform3D przesuniecie_seg5 = new Transform3D();
     Transform3D przesuniecie_ramie2 = new Transform3D();
     
@@ -60,7 +60,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup segment4 = new TransformGroup();
     TransformGroup ramie_p1 = new TransformGroup();
     TransformGroup chwytakTr = new TransformGroup();
-    TransformGroup tg_kulka = new TransformGroup();
+    TransformGroup kulka_p = new TransformGroup();
     TransformGroup segment5 = new TransformGroup();  
     TransformGroup ramie_p2 = new TransformGroup();
     
@@ -73,7 +73,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D nag_przesuniecie_ram = new Transform3D();
     Transform3D nag_przesuniecie_ramie2 = new Transform3D();
     Transform3D nag_przesuniecie_chwytaka = new Transform3D();
-    Transform3D nag_t3d_kulka = new Transform3D();
+    Transform3D nag_kulka_trans3D = new Transform3D();
 
     BranchGroup kulkaBranch = new BranchGroup();
     
@@ -113,12 +113,15 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     
     boolean gra_dzwiek = false;
+    boolean gra_muzyka = false;
     boolean chwycona = false;
     
     
     char ostatni_klawisz = '0';
     
     javax.sound.sampled.Clip clip;
+    
+    javax.sound.sampled.Clip dziw;
 
     PolarArm(){
          super("Polar Robot Arm");
@@ -181,18 +184,17 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     public JPanel stworzPanelPrzyciskow() {
         JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
-                muzyka(false);
+        
 
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
 
-        zacznij_nagrywanie.setText("Rozpocznij nagrywanie");
-        zacznij_nagrywanie.addActionListener(this);
+        nagrywaj.setText("Rozpocznij nagrywanie");
+        nagrywaj.addActionListener(this);
 
-        zakoncz_nagrywanie.setText("Włącz / wyłącz muzykę");
-        zakoncz_nagrywanie.addActionListener(this);
+        muzykaOnOff.setText("Włącz / wyłącz muzykę");
+        muzykaOnOff.addActionListener(this);
         
-        zakoncz_nagrywanie.setEnabled(false);
 
         odtworz_nagranie.setText("Odtworz nagranie");
         odtworz_nagranie.addActionListener(this);
@@ -213,9 +215,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         
 
-        panel_menu.add(zakoncz_nagrywanie);
+        panel_menu.add(muzykaOnOff);
         panel_menu.add(reset_kamery);
-        panel_menu.add(zacznij_nagrywanie);
+        panel_menu.add(nagrywaj);
         panel_menu.add(odtworz_nagranie);
         panel_menu.add(new JLabel("Kąt robota (-360°,360°):"));
         panel_menu.add(textObrot1);
@@ -480,30 +482,30 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(kolizja_chwytaka);
 	    
 	/// kulka 
-     	Material kulkowy = new Material(new Color3f(0.5f, 0.3f,0.2f), new Color3f(0.1f,0.1f,0.1f),
+     	Material material_kulki = new Material(new Color3f(0.5f, 0.3f,0.2f), new Color3f(0.1f,0.1f,0.1f),
                                                 new Color3f(0.8f, 0.3f, 0.5f), new Color3f(0.1f, 0.1f, 0.1f), 20.0f);
 
-        Appearance stylKulka = new Appearance();
-        stylKulka.setMaterial(kulkowy);
+        Appearance wyglad_kulki = new Appearance();
+        wyglad_kulki.setMaterial(material_kulki);
 
         Transform3D t3d_przesuniecie = new Transform3D();
-        tg_kulka.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-        tg_kulka.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         t3d_przesuniecie.set(new Vector3f(0.0f, 0.2f, 1.0f)); // przesuwam obiekt z orgin na miejsce
-        t3d_kulka.mul(t3d_przesuniecie);
-        tg_kulka.setTransform(t3d_przesuniecie);
-        Sphere kulka = new Sphere(0.1f, stylKulka);
-        tg_kulka.addChild(kulka);
-        tg_kulka.setUserData("kulka");
+        kulka_trans3D.mul(t3d_przesuniecie);
+        kulka_p.setTransform(t3d_przesuniecie);
+        Sphere kulka = new Sphere(0.1f, wyglad_kulki);
+        kulka_p.addChild(kulka);
+        kulka_p.setUserData("kulka");
 
         kulkaBranch.setCapability(BranchGroup.ALLOW_DETACH);
-        kulkaBranch.addChild(tg_kulka);
+        kulkaBranch.addChild(kulka_p);
         wezel_scena.addChild(kulkaBranch);
         
-        kolizja_kulki = new CollisionDetectorGroup(tg_kulka,
+        kolizja_kulki = new CollisionDetectorGroup(kulka_p,
                 new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.1f)); // (0.09f, 1.3f, -1.28f)
         kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.1f));
-        tg_kulka.addChild(kolizja_kulki);
+        kulka_p.addChild(kolizja_kulki);
         
         
 
@@ -526,18 +528,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
       }
     }
     // muzyka w tle
-    public void muzyka(boolean czy){
+    public void muzyka(){
         try {
         AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("src\\dzwiek6.mid").getAbsoluteFile());
-        javax.sound.sampled.Clip dziw = AudioSystem.getClip();
+        dziw = AudioSystem.getClip();
         dziw.open(muzyka);
-        if(czy) {
             dziw.start();
-            }
-        else{
-            dziw.stop();
-        }
-        
         } catch(Exception ex) {
             System.out.println("Nie można odtworzyć dźwięku");
             ex.printStackTrace();
@@ -657,36 +653,36 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             chwytakTr.addChild(kulkaBranch);
             //Transform3D t = new Transform3D();
             akcja.set(new Vector3f(0.0f, 0.11f, 0.0f)); // przesuwam obiekt z orgin na miejsce
-            tg_kulka.setTransform(akcja);
+            kulka_p.setTransform(akcja);
             chwycona = true;
             
         }
         if(key_k && chwycona){
             
             Vector3f position = new Vector3f();
-            tg_kulka.getLocalToVworld(t3d_kulka); 
+            kulka_p.getLocalToVworld(kulka_trans3D); 
             //akcja.mul(przesuniecie_seg2);
             //akcja.mul(przesuniecie_ram);
             //akcja.mul(przesuniecie_seg2);
-            t3d_kulka.get(position);
+            kulka_trans3D.get(position);
             float wysokosc = position.getY();
             chwytakTr.removeChild(kulkaBranch);
             wezel_scena.addChild(kulkaBranch);
             akcja.set(position);
             
             //akcja.mul(przesuniecie_ram);
-            tg_kulka.setTransform(akcja);
+            kulka_p.setTransform(akcja);
             akcja.rotX(-kat_wychylenia);
-            t3d_kulka.mul(akcja);
+            kulka_trans3D.mul(akcja);
             akcja.set(new Vector3f(0.0f, 0.11f, 0.0f));
-            t3d_kulka.mul(akcja);
-            //t3d_kulka.mul(przesuniecie_ram);
-            tg_kulka.setTransform(t3d_kulka);
+            kulka_trans3D.mul(akcja);
+            //kulka_trans3D.mul(przesuniecie_ram);
+            kulka_p.setTransform(kulka_trans3D);
             chwycona = false;
             while(wysokosc>0.12){
                 akcja.set(new Vector3f(0.0f, 0.00f, 0.04f));
-                t3d_kulka.mul(akcja);
-                tg_kulka.setTransform(t3d_kulka);
+                kulka_trans3D.mul(akcja);
+                kulka_p.setTransform(kulka_trans3D);
                 wysokosc-=0.04;
                 czekaj();
             }
@@ -760,11 +756,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
 
         // obsługa zdarzenia nagrywania. Jeżeli nagrywamy to usuwamy poprzednie nagranie oraz zapamiętujemy pozycje początkową
-        if (e.getSource() == zacznij_nagrywanie) {
+        if (e.getSource() == nagrywaj) {
             if(!nagrywanie){
-                zacznij_nagrywanie.setBackground(new Color(160, 0, 0));
-                zacznij_nagrywanie.setForeground(Color.white);
-                zacznij_nagrywanie.setText("Zakończ Nagrywanie");
+                nagrywaj.setBackground(new Color(160, 0, 0));
+                nagrywaj.setForeground(Color.white);
+                nagrywaj.setText("Zakończ Nagrywanie");
                 odtworz_nagranie.setEnabled(false);
                 nagrane_przyciski.clear();
             
@@ -776,7 +772,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 nag_przesuniecie_ram.set(przesuniecie_ram);
                 nag_przesuniecie_ramie2.set(przesuniecie_ramie2);
                 nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
-                nag_t3d_kulka.set(t3d_kulka);
+                nag_kulka_trans3D.set(kulka_trans3D);
 
                 nag_wysuniecie = wysuniecie;
                 nag_kat_wychylenia = kat_wychylenia;
@@ -784,16 +780,23 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 nagrywanie = true;
             }
             else if(nagrywanie){
-                zacznij_nagrywanie.setBackground(null); //domyślny kolor
-                zacznij_nagrywanie.setForeground(null);
-                zacznij_nagrywanie.setText("Rozpocznij Nagrywanie");
+                nagrywaj.setBackground(null); //domyślny kolor
+                nagrywaj.setForeground(null);
+                nagrywaj.setText("Rozpocznij Nagrywanie");
                 nagrywanie = false;
                 odtworz_nagranie.setEnabled(true);
             }
         }
 
-        if (e.getSource() == zakoncz_nagrywanie) {
-            
+        if (e.getSource() == muzykaOnOff) {
+            if(!gra_muzyka){
+                muzyka();
+                gra_muzyka = true;
+            }
+            else{
+                dziw.stop();
+                gra_muzyka = false;
+            }
         }
 
         //gdy odtwarzamy nagranie to wracamy do zapamiętanej pozycji początkowej i realizujemy ruchy zapisane w wektorze
@@ -810,7 +813,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             przesuniecie_ram.set(nag_przesuniecie_ram);
             przesuniecie_ramie2.set(nag_przesuniecie_ramie2);
             przesuniecie_chwytaka.set(nag_przesuniecie_chwytaka);
-            t3d_kulka.set(nag_t3d_kulka);
+            kulka_trans3D.set(nag_kulka_trans3D);
         
             segment.setTransform(nag_przesuniecie_seg);
             segment2.setTransform(nag_przesuniecie_seg2);
@@ -820,7 +823,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             ramie_p1.setTransform(nag_przesuniecie_ram);
             ramie_p2.setTransform(nag_przesuniecie_ramie2);
             chwytakTr.setTransform(nag_przesuniecie_chwytaka);
-            tg_kulka.setTransform(nag_t3d_kulka);
+            kulka_p.setTransform(nag_kulka_trans3D);
 
             wysuniecie = nag_wysuniecie;
             kat_wychylenia = nag_kat_wychylenia;
