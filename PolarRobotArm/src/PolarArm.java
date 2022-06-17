@@ -2,7 +2,6 @@ import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.image.TextureLoader;
 import javax.media.j3d.*;
-//import javax.swing.*;
 import java.awt.*;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
@@ -11,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.util.Timer;
 import java.util.Vector;
 import javax.media.j3d.Transform3D;
 import javax.sound.sampled.AudioInputStream;
@@ -23,9 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.vecmath.Color3f;
-import javax.vecmath.Point2f;
 import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 
@@ -125,7 +121,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     javax.sound.sampled.Clip clip;
 
     PolarArm(){
-        super("Polar Robot Arm");
+         super("Polar Robot Arm");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
@@ -140,18 +136,20 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
+
         add(BorderLayout.NORTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
         
 
-        BranchGroup scena = new BranchGroup();
+         BranchGroup scena = new BranchGroup();
         scena = utworzScene();
         scena.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 	scena.compile();
         
         simpleU = new SimpleUniverse(canvas3D);
         ViewingPlatform viewingPlatform = simpleU.getViewingPlatform();
+        
         
         orbita = new OrbitBehavior(canvas3D,
 						OrbitBehavior.REVERSE_ALL);
@@ -169,6 +167,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         przesuniecie_obserwatora.mul(rot_obs);
 
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
+
         simpleU.addBranchGraph(scena);
 
     }
@@ -182,22 +181,24 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     public JPanel stworzPanelPrzyciskow() {
         JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
-        
-        //włącznenie muzyki true
-        muzyka(true);
-        // Guziki w menu
+                muzyka(false);
+
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
 
         zacznij_nagrywanie.setText("Rozpocznij nagrywanie");
         zacznij_nagrywanie.addActionListener(this);
 
-        zakoncz_nagrywanie.setText("Zakoncz nagrywanie");
+        zakoncz_nagrywanie.setText("Włącz / wyłącz muzykę");
         zakoncz_nagrywanie.addActionListener(this);
+        
+        zakoncz_nagrywanie.setEnabled(false);
 
         odtworz_nagranie.setText("Odtworz nagranie");
         odtworz_nagranie.addActionListener(this);
-        //
+        
+        odtworz_nagranie.setEnabled(false);
+        
         textObrot1 = new JTextArea(1,5);
         textObrot1.setFont(new Font("Tahoma",Font.BOLD,40));
         textObrot1.setText("0.00");
@@ -209,12 +210,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         textWysuniecie.setText("0.00");
         ustawKoordynaty.setText("Ustaw Koordynaty");
         ustawKoordynaty.addActionListener(this);
-        ///
+        
         
 
+        panel_menu.add(zakoncz_nagrywanie);
         panel_menu.add(reset_kamery);
         panel_menu.add(zacznij_nagrywanie);
-        panel_menu.add(zakoncz_nagrywanie);
         panel_menu.add(odtworz_nagranie);
         panel_menu.add(new JLabel("Kąt robota (-360°,360°):"));
         panel_menu.add(textObrot1);
@@ -247,29 +248,14 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         Appearance wyglad_ziemia = new Appearance();
         Appearance wyglad_mury   = new Appearance();
-        //Appearance wyglad_daszek = new Appearance();
+        
 
-        Texture tekstura_nieba = new TextureLoader("obrazki/clouds.gif", null, new Container()).getTexture();
-        Appearance wyglad_niebo = new Appearance();
-        wyglad_niebo.setTexture(tekstura_nieba);
-        wyglad_niebo.setTextureAttributes(new TextureAttributes());
-        Sphere niebo = new Sphere(5.0f,
-        Primitive.GENERATE_NORMALS_INWARD + Primitive.GENERATE_TEXTURE_COORDS,
-        wyglad_niebo);
-        //obrot_animacja.addChild(niebo);
-        //Material wmaterial_daszek = new Material(new Color3f(0.0f, 0.1f,0.0f), new Color3f(0.3f,0.0f,0.3f),
-          //                                   new Color3f(0.6f, 0.1f, 0.1f), new Color3f(1.0f, 0.5f, 0.5f), 80.0f);
-        //wyglad_daszek.setMaterial(wmaterial_daszek);
-
-        TextureLoader loader = new TextureLoader("src/podloga3.png",null);
+        TextureLoader loader = new TextureLoader("obrazki/beton.jpg",null);
         ImageComponent2D image = loader.getImage();
 
         Texture2D podloga = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
                                         image.getWidth(), image.getHeight());
 
-        System.out.println(image.getWidth());
-        System.out.println(image.getHeight());
-        
         podloga.setImage(0, image);
         podloga.setBoundaryModeS(Texture.WRAP);
         podloga.setBoundaryModeT(Texture.WRAP);
@@ -285,37 +271,49 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         murek.setBoundaryModeT(Texture.WRAP);
 
         //// tlo
-        
+        float odl_tla = 15f;
+        float wys_tla = 10f;
         Appearance wyglad_tla = new Appearance();
         Texture tekstura_tla = new TextureLoader("src/tlo.png", this).getTexture();
         wyglad_tla.setTexture(tekstura_tla);
+        Appearance wyglad_tla_alt = new Appearance();
+        Texture tekstura_tla_alt = new TextureLoader("obrazki/hala.png", this).getTexture();
+        wyglad_tla_alt.setTexture(tekstura_tla_alt);
         Transform3D przesuniecie_tla1 = new Transform3D();
-        przesuniecie_tla1.setTranslation(new Vector3f(15.0f, 0.1f, 0.0f));
+        przesuniecie_tla1.setTranslation(new Vector3f(odl_tla, 0.1f, 0.0f));
         TransformGroup tlo_p1 = new TransformGroup(przesuniecie_tla1);
-        Box TloModel1 = new Box(5f, 3.0f, 15f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel1 = new Box(0.05f, wys_tla, odl_tla, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
         Transform3D przesuniecie_tla2 = new Transform3D();
-        przesuniecie_tla2.setTranslation(new Vector3f(-15.0f, 0.1f, 0.0f));
+        przesuniecie_tla2.setTranslation(new Vector3f(-odl_tla, 0.1f, 0.0f));
         TransformGroup tlo_p2 = new TransformGroup(przesuniecie_tla2);
-        Box TloModel2 = new Box(5f, 3.0f, 15f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel2 = new Box(0.05f, wys_tla, odl_tla, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
         Transform3D przesuniecie_muru3 = new Transform3D();
-        przesuniecie_muru3.setTranslation(new Vector3f(0.0f, 0.1f, 15.0f));
+        przesuniecie_muru3.setTranslation(new Vector3f(0.0f, 0.1f, odl_tla));
         TransformGroup tlo_p3 = new TransformGroup(przesuniecie_muru3);
-        Box TloModel3 = new Box(15f, 3.0f, 5f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel3 = new Box(odl_tla, wys_tla, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
         Transform3D przesuniecie_muru4 = new Transform3D();
-        przesuniecie_muru4.setTranslation(new Vector3f(0.0f, 0.1f, -15.0f));
+        przesuniecie_muru4.setTranslation(new Vector3f(0.0f, 0.1f, -odl_tla));
         TransformGroup tlo_p4 = new TransformGroup(przesuniecie_muru4);
-        Box TloModel4 = new Box(15f, 3.0f, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
- 
- 
+        Box TloModel4 = new Box(odl_tla, wys_tla, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla_alt);
+        Appearance wyglad_sufitu = new Appearance();
+        Texture tekstura_sufitu = new TextureLoader("obrazki/sufit.jpg", this).getTexture();
+        wyglad_sufitu.setTexture(tekstura_sufitu);
+        Transform3D przesuniecie_sufitu = new Transform3D();
+        przesuniecie_sufitu.setTranslation(new Vector3f(0.0f, wys_tla, 0.0f));
+        TransformGroup sufit_p = new TransformGroup(przesuniecie_sufitu);
+        Box sufit = new Box(odl_tla, 5f, odl_tla, Box.GENERATE_TEXTURE_COORDS, wyglad_sufitu);
+
+
         tlo_p1.addChild(TloModel1);
         tlo_p2.addChild(TloModel2);
         tlo_p3.addChild(TloModel3);
         tlo_p4.addChild(TloModel4);
+        sufit_p.addChild(sufit);
         wezel_scena.addChild(tlo_p1);
         wezel_scena.addChild(tlo_p2);
         wezel_scena.addChild(tlo_p3);
         wezel_scena.addChild(tlo_p4);
-        
+        wezel_scena.addChild(sufit_p);
 
         //BoundingSphere bounds = new BoundingSphere();
         AmbientLight lightA = new AmbientLight();
@@ -330,51 +328,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wyglad_ziemia.setTexture(podloga);
         wyglad_mury.setTexture(murek);
 
-/*
-        
-        Point3f[]  coords = new Point3f[4];
-        for(i = 0; i< 4; i++)
-            coords[i] = new Point3f();
-        Point2f[]  tex_coords = new Point2f[4];
-        for(i = 0; i< 4; i++)
-            tex_coords[i] = new Point2f();
-        coords[0].y = 0.0f;
-        coords[1].y = 0.0f;
-        coords[2].y = 0.0f;
-        coords[3].y = 0.0f;
-        coords[0].x = 3.0f;
-        coords[1].x = 3.0f;
-        coords[2].x = -3.0f;
-        coords[3].x = -3.0f;
-        coords[0].z = 3.0f;
-        coords[1].z = -3.0f;
-        coords[2].z = -3.0f;
-        coords[3].z = 3.0f;
-        tex_coords[0].x = 0.0f;
-        tex_coords[0].y = 0.0f;
-        tex_coords[1].x = 10.0f;
-        tex_coords[1].y = 0.0f;
-        tex_coords[2].x = 0.0f;
-        tex_coords[2].y = 10.0f;
-        tex_coords[3].x = 10.0f;
-        tex_coords[3].y = 0.0f;
-        
-        //ziemia
-        QuadArray qa_ziemia = new QuadArray(4, GeometryArray.COORDINATES|
-                GeometryArray.TEXTURE_COORDINATE_2);
-        qa_ziemia.setCoordinates(0,coords);
-        qa_ziemia.setTextureCoordinates(0, tex_coords);
-        Shape3D ziemia = new Shape3D(qa_ziemia);
-        ziemia.setAppearance(wyglad_ziemia);
-        TransformGroup ziemiaTrans = new TransformGroup();
-        ziemiaTrans.addChild(ziemia);
-        
-        ziemiaTrans.setUserData("ziemia");
-        */
-        //wezel_scena.addChild(ziemiaTrans);
-        //
         float ziemia_wys = 0.02f;
-        float ziemia_szer = 15.0f;
+        float ziemia_szer = 3.0f;
         Box ziemia = new Box(ziemia_szer, ziemia_wys, ziemia_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_ziemia);
         Transform3D przesuniecie_ziemi = new Transform3D();
         przesuniecie_ziemi.setTranslation(new Vector3f(0.0f, -ziemia_wys, 0.0f));
@@ -383,12 +338,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(ziemia_trans);
         kolizja_podlogi = new CollisionDetectorGroup(ziemia_trans,
         new BoundingBox(new Point3d(-ziemia_szer, -0.05f, -ziemia_szer), new Point3d(ziemia_szer, -0.01f, ziemia_szer)));
-        kolizja_podlogi.setSchedulingBounds(new BoundingSphere(new Point3d(), 20f));
+        kolizja_podlogi.setSchedulingBounds(new BoundingSphere(new Point3d(), 10f));
         wezel_scena.addChild(kolizja_podlogi);
         ziemia_trans.setUserData("ziemia");
         //podstawa
         float podstawa_szer = 0.3f;
-        //float podstawa_dl = 0.4f;
         float podstawa_wys = 0.05f;
         
         //murowana podstawa
@@ -526,11 +480,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wezel_scena.addChild(kolizja_chwytaka);
 	    
 	/// kulka 
-     	Material kulkowy = new Material();
-        kulkowy.setEmissiveColor(0.80f, 0.1f, 0.26f);
-        kulkowy.setDiffuseColor(0.32f, 0.21f, 0.08f);
-        kulkowy.setSpecularColor(0.45f, 0.32f, 0.21f);
-        kulkowy.setShininess(38f);
+     	Material kulkowy = new Material(new Color3f(0.5f, 0.3f,0.2f), new Color3f(0.1f,0.1f,0.1f),
+                                                new Color3f(0.8f, 0.3f, 0.5f), new Color3f(0.1f, 0.1f, 0.1f), 20.0f);
 
         Appearance stylKulka = new Appearance();
         stylKulka.setMaterial(kulkowy);
@@ -553,8 +504,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.1f)); // (0.09f, 1.3f, -1.28f)
         kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.1f));
         tg_kulka.addChild(kolizja_kulki);
+        
+        
 
         return wezel_scena;
+
+
     }
 
     public static void main(String args[]){
@@ -576,10 +531,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("src\\dzwiek6.mid").getAbsoluteFile());
         javax.sound.sampled.Clip dziw = AudioSystem.getClip();
         dziw.open(muzyka);
-        if(czy)
+        if(czy) {
             dziw.start();
-        else
-            dziw.stop(); 
+            }
+        else{
+            dziw.stop();
+        }
+        
         } catch(Exception ex) {
             System.out.println("Nie można odtworzyć dźwięku");
             ex.printStackTrace();
@@ -803,27 +761,39 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         // obsługa zdarzenia nagrywania. Jeżeli nagrywamy to usuwamy poprzednie nagranie oraz zapamiętujemy pozycje początkową
         if (e.getSource() == zacznij_nagrywanie) {
-
-            nagrane_przyciski.clear();
+            if(!nagrywanie){
+                zacznij_nagrywanie.setBackground(new Color(160, 0, 0));
+                zacznij_nagrywanie.setForeground(Color.white);
+                zacznij_nagrywanie.setText("Zakończ Nagrywanie");
+                odtworz_nagranie.setEnabled(false);
+                nagrane_przyciski.clear();
             
-            nag_przesuniecie_seg.set(przesuniecie_seg);
-            nag_przesuniecie_seg2.set(przesuniecie_seg2);
-            nag_przesuniecie_seg3.set(przesuniecie_seg3);
-            nag_przesuniecie_seg4.set(przesuniecie_seg4);
-            nag_przesuniecie_seg5.set(przesuniecie_seg5);
-            nag_przesuniecie_ram.set(przesuniecie_ram);
-            nag_przesuniecie_ramie2.set(przesuniecie_ramie2);
-            nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
-            nag_t3d_kulka.set(t3d_kulka);
+                nag_przesuniecie_seg.set(przesuniecie_seg);
+                nag_przesuniecie_seg2.set(przesuniecie_seg2);
+                nag_przesuniecie_seg3.set(przesuniecie_seg3);
+                nag_przesuniecie_seg4.set(przesuniecie_seg4);
+                nag_przesuniecie_seg5.set(przesuniecie_seg5);
+                nag_przesuniecie_ram.set(przesuniecie_ram);
+                nag_przesuniecie_ramie2.set(przesuniecie_ramie2);
+                nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
+                nag_t3d_kulka.set(t3d_kulka);
 
-            nag_wysuniecie = wysuniecie;
-            nag_kat_wychylenia = kat_wychylenia;
-            nag_kat_obrotu = kat_obrotu;
-            nagrywanie = true;
+                nag_wysuniecie = wysuniecie;
+                nag_kat_wychylenia = kat_wychylenia;
+                nag_kat_obrotu = kat_obrotu;
+                nagrywanie = true;
+            }
+            else if(nagrywanie){
+                zacznij_nagrywanie.setBackground(null); //domyślny kolor
+                zacznij_nagrywanie.setForeground(null);
+                zacznij_nagrywanie.setText("Rozpocznij Nagrywanie");
+                nagrywanie = false;
+                odtworz_nagranie.setEnabled(true);
+            }
         }
 
         if (e.getSource() == zakoncz_nagrywanie) {
-            nagrywanie = false;
+            
         }
 
         //gdy odtwarzamy nagranie to wracamy do zapamiętanej pozycji początkowej i realizujemy ruchy zapisane w wektorze
