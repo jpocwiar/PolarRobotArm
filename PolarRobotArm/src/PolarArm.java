@@ -261,12 +261,15 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
           //                                   new Color3f(0.6f, 0.1f, 0.1f), new Color3f(1.0f, 0.5f, 0.5f), 80.0f);
         //wyglad_daszek.setMaterial(wmaterial_daszek);
 
-        TextureLoader loader = new TextureLoader("src/podloga.jpg",null);
+        TextureLoader loader = new TextureLoader("src/podloga3.png",null);
         ImageComponent2D image = loader.getImage();
 
         Texture2D podloga = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
                                         image.getWidth(), image.getHeight());
 
+        System.out.println(image.getWidth());
+        System.out.println(image.getHeight());
+        
         podloga.setImage(0, image);
         podloga.setBoundaryModeS(Texture.WRAP);
         podloga.setBoundaryModeT(Texture.WRAP);
@@ -287,21 +290,21 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Texture tekstura_tla = new TextureLoader("src/tlo.png", this).getTexture();
         wyglad_tla.setTexture(tekstura_tla);
         Transform3D przesuniecie_tla1 = new Transform3D();
-        przesuniecie_tla1.setTranslation(new Vector3f(5.0f, 0.1f, 0.0f));
+        przesuniecie_tla1.setTranslation(new Vector3f(15.0f, 0.1f, 0.0f));
         TransformGroup tlo_p1 = new TransformGroup(przesuniecie_tla1);
-        Box TloModel1 = new Box(0.05f, 3.0f, 5f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel1 = new Box(5f, 3.0f, 15f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
         Transform3D przesuniecie_tla2 = new Transform3D();
-        przesuniecie_tla2.setTranslation(new Vector3f(-5.0f, 0.1f, 0.0f));
+        przesuniecie_tla2.setTranslation(new Vector3f(-15.0f, 0.1f, 0.0f));
         TransformGroup tlo_p2 = new TransformGroup(przesuniecie_tla2);
-        Box TloModel2 = new Box(0.05f, 3.0f, 5f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel2 = new Box(5f, 3.0f, 15f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
         Transform3D przesuniecie_muru3 = new Transform3D();
-        przesuniecie_muru3.setTranslation(new Vector3f(0.0f, 0.1f, 5.0f));
+        przesuniecie_muru3.setTranslation(new Vector3f(0.0f, 0.1f, 15.0f));
         TransformGroup tlo_p3 = new TransformGroup(przesuniecie_muru3);
-        Box TloModel3 = new Box(5f, 3.0f, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel3 = new Box(15f, 3.0f, 5f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
         Transform3D przesuniecie_muru4 = new Transform3D();
-        przesuniecie_muru4.setTranslation(new Vector3f(0.0f, 0.1f, -5.0f));
+        przesuniecie_muru4.setTranslation(new Vector3f(0.0f, 0.1f, -15.0f));
         TransformGroup tlo_p4 = new TransformGroup(przesuniecie_muru4);
-        Box TloModel4 = new Box(5f, 3.0f, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Box TloModel4 = new Box(15f, 3.0f, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
  
  
         tlo_p1.addChild(TloModel1);
@@ -371,7 +374,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         //wezel_scena.addChild(ziemiaTrans);
         //
         float ziemia_wys = 0.02f;
-        float ziemia_szer = 5.0f;
+        float ziemia_szer = 15.0f;
         Box ziemia = new Box(ziemia_szer, ziemia_wys, ziemia_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_ziemia);
         Transform3D przesuniecie_ziemi = new Transform3D();
         przesuniecie_ziemi.setTranslation(new Vector3f(0.0f, -ziemia_wys, 0.0f));
