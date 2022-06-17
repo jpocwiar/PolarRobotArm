@@ -772,6 +772,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 nagrywaj.setForeground(Color.white);
                 nagrywaj.setText("Zakończ Nagrywanie");
                 odtworz_nagranie.setEnabled(false);
+                reset_ustawienia.setEnabled(false);
                 nagrane_przyciski.clear();
             
                 nag_przesuniecie_seg.set(przesuniecie_seg);
@@ -796,6 +797,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 nagrywaj.setText("Rozpocznij Nagrywanie");
                 nagrywanie = false;
                 odtworz_nagranie.setEnabled(true);
+                reset_ustawienia.setEnabled(true);
             }
         }
 
@@ -815,6 +817,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         if (e.getSource() == odtworz_nagranie) {
             nagrywanie = false;
             odtwarzanie = true;
+            reset_ustawienia.setEnabled(false);
 
             przesuniecie_seg.set(nag_przesuniecie_seg);
             przesuniecie_seg2.set(nag_przesuniecie_seg2);
@@ -842,10 +845,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             if(nag_chwycona && !chwycona){
                 wezel_scena.removeChild(kulkaBranch);
                 chwytakTr.addChild(kulkaBranch);
-                //akcja.set(new Vector3f(0.0f, 0.11f, 0.0f)); // przesuwam obiekt z orgin na miejsce
-                //kulka_p.setTransform(akcja);
+                Transform3D akcja = new Transform3D();
+                akcja.set(new Vector3f(0.0f, 0.11f, 0.0f));
                 kulka_trans3D.set(nag_kulka_trans3D);
-                kulka_p.setTransform(nag_kulka_trans3D);
+                kulka_trans3D.mul(akcja);
+                kulka_p.setTransform(akcja);
                 chwycona = true;
             }
             else if(!nag_chwycona && chwycona){
@@ -868,6 +872,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 } //taka konstrukcja służy działaniu dźwięku, klawisz uznajemy za puszczony, gdy zmienił się na inny, lub skończył się ruch
             }
             odtwarzanie = false;
+            reset_ustawienia.setEnabled(true);
         }
     }
 
