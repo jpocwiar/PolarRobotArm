@@ -125,7 +125,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     javax.sound.sampled.Clip clip;
 
     PolarArm(){
-         super("Polar Robot Arm");
+        super("Polar Robot Arm");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
@@ -140,20 +140,18 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         add(canvas3D);
         pack();
         add(BorderLayout.EAST, stworzPanelPrzyciskow());
-
         add(BorderLayout.NORTH, dodanieInstrukcji());
         add(BorderLayout.CENTER, canvas3D);
         setVisible(true);
         
 
-         BranchGroup scena = new BranchGroup();
+        BranchGroup scena = new BranchGroup();
         scena = utworzScene();
         scena.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 	scena.compile();
         
         simpleU = new SimpleUniverse(canvas3D);
         ViewingPlatform viewingPlatform = simpleU.getViewingPlatform();
-        
         
         orbita = new OrbitBehavior(canvas3D,
 						OrbitBehavior.REVERSE_ALL);
@@ -171,7 +169,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         przesuniecie_obserwatora.mul(rot_obs);
 
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
-
         simpleU.addBranchGraph(scena);
 
     }
@@ -185,8 +182,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     public JPanel stworzPanelPrzyciskow() {
         JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
-                muzyka(false);
-
+        
+        //włącznenie muzyki true
+        muzyka(true);
+        // Guziki w menu
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
 
@@ -198,7 +197,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         odtworz_nagranie.setText("Odtworz nagranie");
         odtworz_nagranie.addActionListener(this);
-        
+        //
         textObrot1 = new JTextArea(1,5);
         textObrot1.setFont(new Font("Tahoma",Font.BOLD,40));
         textObrot1.setText("0.00");
@@ -210,7 +209,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         textWysuniecie.setText("0.00");
         ustawKoordynaty.setText("Ustaw Koordynaty");
         ustawKoordynaty.addActionListener(this);
-        
+        ///
         
 
         panel_menu.add(reset_kamery);
@@ -262,7 +261,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
           //                                   new Color3f(0.6f, 0.1f, 0.1f), new Color3f(1.0f, 0.5f, 0.5f), 80.0f);
         //wyglad_daszek.setMaterial(wmaterial_daszek);
 
-        TextureLoader loader = new TextureLoader("obrazki/beton.jpg",null);
+        TextureLoader loader = new TextureLoader("src/podloga.jpg",null);
         ImageComponent2D image = loader.getImage();
 
         Texture2D podloga = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -282,6 +281,37 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         murek.setBoundaryModeS(Texture.WRAP);
         murek.setBoundaryModeT(Texture.WRAP);
 
+        //// tlo
+        
+        Appearance wyglad_tla = new Appearance();
+        Texture tekstura_tla = new TextureLoader("src/tlo.png", this).getTexture();
+        wyglad_tla.setTexture(tekstura_tla);
+        Transform3D przesuniecie_tla1 = new Transform3D();
+        przesuniecie_tla1.setTranslation(new Vector3f(5.0f, 0.1f, 0.0f));
+        TransformGroup tlo_p1 = new TransformGroup(przesuniecie_tla1);
+        Box TloModel1 = new Box(0.05f, 3.0f, 5f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Transform3D przesuniecie_tla2 = new Transform3D();
+        przesuniecie_tla2.setTranslation(new Vector3f(-5.0f, 0.1f, 0.0f));
+        TransformGroup tlo_p2 = new TransformGroup(przesuniecie_tla2);
+        Box TloModel2 = new Box(0.05f, 3.0f, 5f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Transform3D przesuniecie_muru3 = new Transform3D();
+        przesuniecie_muru3.setTranslation(new Vector3f(0.0f, 0.1f, 5.0f));
+        TransformGroup tlo_p3 = new TransformGroup(przesuniecie_muru3);
+        Box TloModel3 = new Box(5f, 3.0f, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+        Transform3D przesuniecie_muru4 = new Transform3D();
+        przesuniecie_muru4.setTranslation(new Vector3f(0.0f, 0.1f, -5.0f));
+        TransformGroup tlo_p4 = new TransformGroup(przesuniecie_muru4);
+        Box TloModel4 = new Box(5f, 3.0f, 0.05f, Box.GENERATE_TEXTURE_COORDS, wyglad_tla);
+ 
+ 
+        tlo_p1.addChild(TloModel1);
+        tlo_p2.addChild(TloModel2);
+        tlo_p3.addChild(TloModel3);
+        tlo_p4.addChild(TloModel4);
+        wezel_scena.addChild(tlo_p1);
+        wezel_scena.addChild(tlo_p2);
+        wezel_scena.addChild(tlo_p3);
+        wezel_scena.addChild(tlo_p4);
         
 
         //BoundingSphere bounds = new BoundingSphere();
@@ -299,52 +329,38 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
 /*
         
-
         Point3f[]  coords = new Point3f[4];
         for(i = 0; i< 4; i++)
             coords[i] = new Point3f();
-
         Point2f[]  tex_coords = new Point2f[4];
         for(i = 0; i< 4; i++)
             tex_coords[i] = new Point2f();
-
         coords[0].y = 0.0f;
         coords[1].y = 0.0f;
         coords[2].y = 0.0f;
         coords[3].y = 0.0f;
-
         coords[0].x = 3.0f;
         coords[1].x = 3.0f;
         coords[2].x = -3.0f;
         coords[3].x = -3.0f;
-
         coords[0].z = 3.0f;
         coords[1].z = -3.0f;
         coords[2].z = -3.0f;
         coords[3].z = 3.0f;
-
         tex_coords[0].x = 0.0f;
         tex_coords[0].y = 0.0f;
-
         tex_coords[1].x = 10.0f;
         tex_coords[1].y = 0.0f;
-
         tex_coords[2].x = 0.0f;
         tex_coords[2].y = 10.0f;
-
         tex_coords[3].x = 10.0f;
         tex_coords[3].y = 0.0f;
-
         
         //ziemia
-
         QuadArray qa_ziemia = new QuadArray(4, GeometryArray.COORDINATES|
                 GeometryArray.TEXTURE_COORDINATE_2);
         qa_ziemia.setCoordinates(0,coords);
-
         qa_ziemia.setTextureCoordinates(0, tex_coords);
-
-
         Shape3D ziemia = new Shape3D(qa_ziemia);
         ziemia.setAppearance(wyglad_ziemia);
         TransformGroup ziemiaTrans = new TransformGroup();
@@ -534,12 +550,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.1f)); // (0.09f, 1.3f, -1.28f)
         kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.1f));
         tg_kulka.addChild(kolizja_kulki);
-        
-        
 
         return wezel_scena;
-
-
     }
 
     public static void main(String args[]){
@@ -561,13 +573,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("src\\dzwiek6.mid").getAbsoluteFile());
         javax.sound.sampled.Clip dziw = AudioSystem.getClip();
         dziw.open(muzyka);
-        if(czy) {
+        if(czy)
             dziw.start();
-            }
-        else{
-            dziw.stop();
-        }
-        
+        else
+            dziw.stop(); 
         } catch(Exception ex) {
             System.out.println("Nie można odtworzyć dźwięku");
             ex.printStackTrace();
