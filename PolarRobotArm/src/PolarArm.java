@@ -758,10 +758,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             keyReleased(klawisz_A);
             while(kat_obrotu/Math.PI*180>celObrotu1+1){
                 keyPressed(klawisz_D);
-                keyReleased(klawisz_D);
                 czekaj();
                 if(sprawdzanieKolizji()) break;
             }
+            keyReleased(klawisz_D);
             while(kat_wychylenia/Math.PI*180<celObrotu2-1){
                 keyPressed(klawisz_W);
                 czekaj();
@@ -804,7 +804,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
             nag_t3d_kulka.set(t3d_kulka);
 
-
             nag_wysuniecie = wysuniecie;
             nag_kat_wychylenia = kat_wychylenia;
             nag_kat_obrotu = kat_obrotu;
@@ -846,14 +845,16 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             kat_obrotu = nag_kat_obrotu;
 
             System.out.println(nagrane_przyciski.size());
-
+            //dzwiek();
+            //gra_dzwiek = true;
             for (int i = 0; i < nagrane_przyciski.size(); i++) {
                 
-                czekaj();
                 keyPressed(nagrane_przyciski.elementAt(i));
+                czekaj();
+                if(i == nagrane_przyciski.size()-1 || nagrane_przyciski.elementAt(i+1) != nagrane_przyciski.elementAt(i)){
                 keyReleased(nagrane_przyciski.elementAt(i));
+                } //taka konstrukcja służy działaniu dźwięku, klawisz uznajemy za puszczony, gdy zmienił się na inny, lub skończył się ruch
             }
-
             odtwarzanie = false;
         }
     }
