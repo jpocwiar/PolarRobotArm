@@ -568,18 +568,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         }
     }
     
-    public void dzwiek(boolean czy){
+    public void dzwiek(){
         try {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src\\dzwiek2.wav").getAbsoluteFile());
         clip = AudioSystem.getClip();
         clip.open(audioInputStream);
-        if(czy) {
-            clip.start();
-            }
-        else{
-            clip.stop();
-        }
-        
+        clip.start();
         } catch(Exception ex) {
             System.out.println("Nie można odtworzyć dźwięku");
             ex.printStackTrace();
@@ -721,12 +715,13 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             }
         }
         if((key_a || key_s || key_d || key_w || key_q ||key_e) && !gra_dzwiek){
-            dzwiek(true);
+            dzwiek();
             gra_dzwiek = true;
         }
         else if(!(key_a || key_s || key_d || key_w || key_q ||key_e) && gra_dzwiek){
-            dzwiek(false);
+            
             gra_dzwiek = false;
+            clip.stop();
         }
         
         textObrot1.setText(String.format("%.2f", kat_obrotu/Math.PI*180));
@@ -760,12 +755,11 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             float celObrotu1 = Float.parseFloat(textObrot1.getText()) % 360;
             float celObrotu2 = Float.parseFloat(textObrot2.getText()) % 46;
             
-            
             while(kat_obrotu/Math.PI*180<celObrotu1-1){
                 keyPressed(klawisz_A);
-                keyReleased(klawisz_A);
                 czekaj();
             }
+            keyReleased(klawisz_A);
             while(kat_obrotu/Math.PI*180>celObrotu1+1){
                 keyPressed(klawisz_D);
                 keyReleased(klawisz_D);
@@ -773,25 +767,24 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             }
             while(kat_wychylenia/Math.PI*180<celObrotu2-1){
                 keyPressed(klawisz_W);
-                keyReleased(klawisz_W);
                 czekaj();
             }
+            keyReleased(klawisz_W);
             while(kat_wychylenia/Math.PI*180>celObrotu2+1){
                 keyPressed(klawisz_S);
-                keyReleased(klawisz_S);
                 czekaj();
             }
+            keyReleased(klawisz_S);
             while(wysuniecie/0.6*100<celWysuniecia-1){
                 keyPressed(klawisz_Q);
-                keyReleased(klawisz_Q);
                 czekaj();
             }
+            keyReleased(klawisz_Q);
             while(wysuniecie/0.6*100>celWysuniecia){
                 keyPressed(klawisz_E);
-                keyReleased(klawisz_E);
                 czekaj();
             }
-            
+            keyReleased(klawisz_E);
         }
         
 
