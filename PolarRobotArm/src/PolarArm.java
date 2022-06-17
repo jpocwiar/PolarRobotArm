@@ -85,6 +85,15 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     CollisionDetectorGroup kolizja_chwytaka;
     CollisionDetectorGroup kolizja_podlogi;
     
+    KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
+    KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
+    KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
+    KeyEvent klawisz_D = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_D, 'D');
+    KeyEvent klawisz_W = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_W, 'W');
+    KeyEvent klawisz_S = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_S, 'S');
+    KeyEvent klawisz_I = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_I, 'I');
+    KeyEvent klawisz_K = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_K, 'K');
+    
     boolean nagrywanie;
     boolean odtwarzanie;
     Vector<KeyEvent> nagrane_przyciski = new Vector<KeyEvent>();
@@ -220,9 +229,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     BranchGroup utworzScene()
     {
 
-        int i;
-
-        
         wezel_scena.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         wezel_scena.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
         
@@ -232,7 +238,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
       
 
         Alpha alpha_animacja = new Alpha(-1,50000);
-      //Alpha alpha_animacja2 = new Alpha(-1,Alpha.DECREASING_ENABLE,0,0,0,0,0,5000,0,0);
 
         RotationInterpolator obracacz = new RotationInterpolator(alpha_animacja, obrot_animacja);
    
@@ -386,15 +391,16 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         
         //podstawa robota
         float wys_seg1=0.1f;
-
+        segment.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         segment2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment2.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         segment2.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
         segment2.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
-        segment.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment3.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment4.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         segment5.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        segment5.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         ramie_p1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         ramie_p2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
@@ -607,6 +613,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                segment2.setTransform(przesuniecie_seg2); 
             }
             ostatni_klawisz = 'a';
+            
         }
         if (key_w  && kat_wychylenia < Math.PI/4) {
             
@@ -728,12 +735,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     
     public void actionPerformed(ActionEvent e) {
-        KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
-        KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
-        KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
-        KeyEvent klawisz_D = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_D, 'D');
-        KeyEvent klawisz_W = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_W, 'W');
-        KeyEvent klawisz_S = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_S, 'S');
         if (e.getSource() == reset_kamery) {
             Transform3D przesuniecie_obserwatora = new Transform3D();
             Transform3D rot_obs = new Transform3D();
@@ -792,7 +793,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         if (e.getSource() == zacznij_nagrywanie) {
 
             nagrane_przyciski.clear();
-          
+            
             nag_przesuniecie_seg.set(przesuniecie_seg);
             nag_przesuniecie_seg2.set(przesuniecie_seg2);
             nag_przesuniecie_seg3.set(przesuniecie_seg3);
@@ -847,12 +848,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             System.out.println(nagrane_przyciski.size());
 
             for (int i = 0; i < nagrane_przyciski.size(); i++) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-
+                
+                czekaj();
                 keyPressed(nagrane_przyciski.elementAt(i));
                 keyReleased(nagrane_przyciski.elementAt(i));
             }
@@ -866,45 +863,38 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
-        KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
-        KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
-        KeyEvent klawisz_D = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_D, 'D');
-        KeyEvent klawisz_W = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_W, 'W');
-        KeyEvent klawisz_S = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_S, 'S');
-        KeyEvent klawisz_I = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_I, 'I');
-        KeyEvent klawisz_K = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_K, 'K');
+        
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:                
                 key_a = true;
-                nagrane_przyciski.add(klawisz_A);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_A);
                 break;
             case KeyEvent.VK_D:
                 key_d = true;
-                nagrane_przyciski.add(klawisz_D);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_D);
                 break;
             case KeyEvent.VK_W: 
-                nagrane_przyciski.add(klawisz_W);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_W);
                 key_w = true;
                 break;
             case KeyEvent.VK_S:
-                nagrane_przyciski.add(klawisz_S);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_S);
                 key_s = true;
                 break;
             case KeyEvent.VK_Q:
-                nagrane_przyciski.add(klawisz_Q);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_Q);
                 key_q = true;
                 break;
             case KeyEvent.VK_E:
-                nagrane_przyciski.add(klawisz_E);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_E);
                 key_e = true;
                 break;
             case KeyEvent.VK_I:
-                nagrane_przyciski.add(klawisz_I);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_I);
                 key_i = true;
                 break;
             case KeyEvent.VK_K:
-                nagrane_przyciski.add(klawisz_K);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_K);
                 key_k = true;
                 break;
         }
