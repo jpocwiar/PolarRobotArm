@@ -69,7 +69,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup segment5 = new TransformGroup();
     TransformGroup segment6 = new TransformGroup();
     TransformGroup ramie_p2 = new TransformGroup();
-    TransformGroup silnik_t = new TransformGroup();
+    
     
 	
     Transform3D nag_przesuniecie_seg = new Transform3D();  
@@ -82,7 +82,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D nag_przesuniecie_ramie2 = new Transform3D();
     Transform3D nag_przesuniecie_chwytaka = new Transform3D();
     Transform3D nag_kulka_trans3D = new Transform3D();
-    Transform3D przesuniecie_silnika = new Transform3D();
 
     BranchGroup kulkaBranch = new BranchGroup();
     
@@ -460,24 +459,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Cylinder walec6 = new Cylinder(0.08f,podstawa_szer-0.09f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
         segment6.addChild(walec6);
         ramie_p1.addChild(segment6);
-        /*
-        ObjectFile object = new ObjectFile();
-        Scene silnik = null;
-        File file = new java.io.File("src/chwytakv2.obj");
-        try {
-            silnik = object.load(file.toURI().toURL());
-        } catch (Exception e) {
-            System.err.println(e);
-            System.exit(1);
-        }
-        silnik_t.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        silnik_t.addChild(silnik.getSceneGroup());
-        przesuniecie_silnika.set(new Vector3f(0.5f, -0.01f, -0.2f)); 
-        przesuniecie_silnika.setScale(1f);
-
-        silnik_t.setTransform(przesuniecie_silnika);
-        ramie_p1.addChild(silnik_t);
-        */
+       
         //ten aluminiowy walec, wokół którego będzie wykonywany obrót w górę i w dół
         
         przesuniecie_seg5.set(new Vector3f(0.0f,0.0f,0.0f));
@@ -499,6 +481,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ramie_p2.addChild(ramie2);
         ramie_p1.addChild(ramie_p2);
         
+        //chwytak
+        
+        
         Appearance  wyglad_chwytaka = new Appearance();
         Material chwytak_mat = new Material(new Color3f(0.0f, 0.0f,0.1f), new Color3f(0.0f,0.1f,0.1f),
                                                 new Color3f(0.3f, 0.3f, 0.3f), new Color3f(1.0f, 1.0f, 1.0f),100.0f);
@@ -516,7 +501,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         chwytakTr.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         
         kolizja_chwytaka = new CollisionDetectorGroup(chwytakTr,
-                new BoundingSphere(new Point3d(0.0f, 0.0f, 0.1f), 0.03f)); // (0.09f, 1.3f, -1.28f)
+                new BoundingSphere(new Point3d(0.0f, 0.0f, 0.1f), 0.03f)); 
         kolizja_chwytaka.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
         wezel_scena.addChild(kolizja_chwytaka);
 	    
