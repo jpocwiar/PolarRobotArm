@@ -718,11 +718,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             dzwiek();
             gra_dzwiek = true;
         }
-        else if(!(key_a || key_s || key_d || key_w || key_q ||key_e) && gra_dzwiek){
-            
-            gra_dzwiek = false;
-            clip.stop();
-        }
         
         textObrot1.setText(String.format("%.2f", kat_obrotu/Math.PI*180));
         textObrot2.setText(String.format("%.2f", kat_wychylenia/Math.PI*180));
@@ -764,25 +759,30 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 keyPressed(klawisz_D);
                 keyReleased(klawisz_D);
                 czekaj();
+                if(sprawdzanieKolizji()) break;
             }
             while(kat_wychylenia/Math.PI*180<celObrotu2-1){
                 keyPressed(klawisz_W);
                 czekaj();
+                if(sprawdzanieKolizji()) break;
             }
             keyReleased(klawisz_W);
             while(kat_wychylenia/Math.PI*180>celObrotu2+1){
                 keyPressed(klawisz_S);
                 czekaj();
+                if(sprawdzanieKolizji()) break;
             }
             keyReleased(klawisz_S);
             while(wysuniecie/0.6*100<celWysuniecia-1){
                 keyPressed(klawisz_Q);
                 czekaj();
+                if(sprawdzanieKolizji()) break;
             }
             keyReleased(klawisz_Q);
             while(wysuniecie/0.6*100>celWysuniecia){
                 keyPressed(klawisz_E);
                 czekaj();
+                if(sprawdzanieKolizji()) break;
             }
             keyReleased(klawisz_E);
         }
