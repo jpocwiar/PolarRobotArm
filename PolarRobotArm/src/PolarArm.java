@@ -40,6 +40,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     JButton muzykaOnOff = new JButton();
     JButton odtworz_nagranie = new JButton();
     JButton ustawKoordynaty = new JButton();
+    JButton reset_ustawienia = new JButton();
 
     JTextArea textObrot1 = new JTextArea();
     JTextArea textObrot2 = new JTextArea();
@@ -116,6 +117,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean gra_dzwiek = false;
     boolean gra_muzyka = false;
     boolean chwycona = false;
+    boolean nag_chwycona = false;
     
     
     char ostatni_klawisz = '0';
@@ -184,9 +186,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
     
     public JPanel stworzPanelPrzyciskow() {
-        JPanel panel_menu = new JPanel(new GridLayout(11, 1, 10, 10));
+        JPanel panel_menu = new JPanel(new GridLayout(12, 1, 10, 10));
         
-
+        reset_ustawienia.setText("Reset Ustawienia Kulki");
+        reset_ustawienia.addActionListener(this);
         reset_kamery.setText("Reset Kamery");
         reset_kamery.addActionListener(this);
 
@@ -214,9 +217,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         ustawKoordynaty.setText("Ustaw Koordynaty");
         ustawKoordynaty.addActionListener(this);
         
-        
-
         panel_menu.add(muzykaOnOff);
+        panel_menu.add(reset_ustawienia);
         panel_menu.add(reset_kamery);
         panel_menu.add(nagrywaj);
         panel_menu.add(odtworz_nagranie);
@@ -494,7 +496,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Transform3D przesuniecie_kulki = new Transform3D();
         kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         kulka_p.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        przesuniecie_kulki.set(new Vector3f(0.0f, 0.1f, 1.0f)); // przesuwam obiekt z orgin na miejsce
+        przesuniecie_kulki.set(new Vector3f(0.0f, 0.11f, 1.0f)); // przesuwam obiekt z orgin na miejsce
         kulka_trans3D.mul(przesuniecie_kulki);
         kulka_p.setTransform(przesuniecie_kulki);
         Sphere kulka = new Sphere(0.1f, wyglad_kulki);
@@ -654,7 +656,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
            
             wezel_scena.removeChild(kulkaBranch);
             chwytakTr.addChild(kulkaBranch);
-            //Transform3D t = new Transform3D();
             akcja.set(new Vector3f(0.0f, 0.11f, 0.0f)); // przesuwam obiekt z orgin na miejsce
             kulka_p.setTransform(akcja);
             chwycona = true;
@@ -664,9 +665,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             
             Vector3f position = new Vector3f();
             kulka_p.getLocalToVworld(kulka_trans3D); 
-            //akcja.mul(przesuniecie_seg2);
-            //akcja.mul(przesuniecie_ram);
-            //akcja.mul(przesuniecie_seg2);
             kulka_trans3D.get(position);
             float wysokosc = position.getY();
             chwytakTr.removeChild(kulkaBranch);
@@ -704,6 +702,15 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == reset_ustawienia) {
+            if(chwycona){
+                chwytakTr.removeChild(kulkaBranch);
+                wezel_scena.addChild(kulkaBranch);
+                chwycona = false;
+            }
+            kulka_trans3D.set(new Vector3f(0.0f, 0.11f, 1.0f));
+            kulka_p.setTransform(kulka_trans3D);
+        }
         if (e.getSource() == reset_kamery) {
             Transform3D przesuniecie_obserwatora = new Transform3D();
             Transform3D rot_obs = new Transform3D();
@@ -776,6 +783,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 nag_przesuniecie_ramie2.set(przesuniecie_ramie2);
                 nag_przesuniecie_chwytaka.set(przesuniecie_chwytaka);
                 nag_kulka_trans3D.set(kulka_trans3D);
+                nag_chwycona = chwycona;
 
                 nag_wysuniecie = wysuniecie;
                 nag_kat_wychylenia = kat_wychylenia;
@@ -826,15 +834,31 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             ramie_p1.setTransform(nag_przesuniecie_ram);
             ramie_p2.setTransform(nag_przesuniecie_ramie2);
             chwytakTr.setTransform(nag_przesuniecie_chwytaka);
-            kulka_p.setTransform(nag_kulka_trans3D);
+            
 
             wysuniecie = nag_wysuniecie;
             kat_wychylenia = nag_kat_wychylenia;
             kat_obrotu = nag_kat_obrotu;
-
+            if(nag_chwycona && !chwycona){
+                wezel_scena.removeChild(kulkaBranch);
+                chwytakTr.addChild(kulkaBranch);
+                //akcja.set(new Vector3f(0.0f, 0.11f, 0.0f)); // przesuwam obiekt z orgin na miejsce
+                //kulka_p.setTransform(akcja);
+                kulka_trans3D.set(nag_kulka_trans3D);
+                kulka_p.setTransform(nag_kulka_trans3D);
+                chwycona = true;
+            }
+            else if(!nag_chwycona && chwycona){
+                chwytakTr.removeChild(kulkaBranch);
+                wezel_scena.addChild(kulkaBranch);
+                kulka_p.setTransform(nag_kulka_trans3D);
+                chwycona = false;
+            }
+            else if(nag_chwycona && chwycona){
+                
+            }
+            else kulka_p.setTransform(nag_kulka_trans3D);
             System.out.println(nagrane_przyciski.size());
-            //dzwiek();
-            //gra_dzwiek = true;
             for (int i = 0; i < nagrane_przyciski.size(); i++) {
                 
                 keyPressed(nagrane_przyciski.elementAt(i));
@@ -919,7 +943,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 key_k = false;
                 break;
         }
-        // teraz przy każdym ruchu bedzie dzwiek
         gra_dzwiek = false;
         clip.stop();
     }
