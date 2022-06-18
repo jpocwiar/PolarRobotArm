@@ -35,18 +35,18 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     BoundingSphere boundso;
     SimpleUniverse simpleU;
     OrbitBehavior orbita;
-    // guziki 
+    //przyciski 
     JButton reset_kamery = new JButton();
     JButton nagrywaj = new JButton();
     JButton muzykaOnOff = new JButton();
     JButton odtworz_nagranie = new JButton();
     JButton ustawKoordynaty = new JButton();
     JButton reset_ustawienia = new JButton();
-
+    //pola tekstowe z koordynatami
     JTextArea textObrot1 = new JTextArea();
     JTextArea textObrot2 = new JTextArea();
     JTextArea textWysuniecie = new JTextArea();
-    // segmenty
+    //segmenty robota
     Transform3D przesuniecie_seg1 = new Transform3D();
     Transform3D przesuniecie_seg2 = new Transform3D();
     Transform3D przesuniecie_seg3 = new Transform3D();
@@ -60,7 +60,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup segment4 = new TransformGroup();
     TransformGroup segment5 = new TransformGroup();
     TransformGroup segment6 = new TransformGroup();
-    // ramiona
+    //ramię
     Transform3D przesuniecie_ram = new Transform3D();
     Transform3D przesuniecie_ramie2 = new Transform3D();
     Transform3D przesuniecie_chwytaka = new Transform3D();
@@ -74,7 +74,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup kulka_p = new TransformGroup();
     BranchGroup kulkaBranch = new BranchGroup();
     
-    // zmienne potrzebne do nagywania
+    // zmienne wskazujące stan nagrywania i odtwarzania
     boolean nagrywanie;
     boolean odtwarzanie;
     Vector<KeyEvent> nagrane_przyciski = new Vector<KeyEvent>();
@@ -90,12 +90,10 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     Transform3D nag_przesuniecie_chwytaka = new Transform3D();
     Transform3D nag_kulka_trans3D = new Transform3D();
   
-    // kolizja
     detektorKolizji kolizja_kulki;
     detektorKolizji kolizja_chwytaka;
     detektorKolizji kolizja_podlogi;
     
-    // poruszanie
     KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
     KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
     KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
@@ -114,7 +112,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean key_i;
     boolean key_k;
     
-    // zmienne poczatkowe
+    //zmienne globalne, wartości początkowe
     float wysuniecie=0.0f;
     float kat_wychylenia=0.0f;
     float kat_obrotu=0.0f;
@@ -245,7 +243,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         loader = new TextureLoader("obrazki/black.jpg",this);
         image = loader.getImage();
-        // stworzenie tla
+        //stworzenie tła
         float odl_tla = 15f;
         float wys_tla = 10f;
         Appearance wyglad_tla = new Appearance();
@@ -364,7 +362,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         segment1.addChild(walec);
         wezel_scena.addChild(segment1);
         
-        //ten główny słup
+        //pionowy segment
         float wys_seg2 = 0.6f;
         
         przesuniecie_seg2.set(new Vector3f(0.0f,podstawa_wys + wys_seg1 + wys_seg2/2,0.0f));
@@ -374,7 +372,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         segment2.addChild(walec2);
         wezel_scena.addChild(segment2);
         
-        //te koła z boku 
+        //okrągłe elementy z boku
         float gr_kola = 0.05f;
         float promien_kola = 0.15f;
         
@@ -484,59 +482,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     }
 
-    public static void main(String args[]){
-        
-      new PolarArm();
-
-   }
     
-    //detektor kolizji przyjmujący obiekt i granicę kolizji
-    public class detektorKolizji extends Behavior {
-
-        private boolean wKolizji = false;
-        private Group group;
-
-        private WakeupOnCollisionEntry wEnter;
-        private WakeupOnCollisionExit wExit;
-
-        public detektorKolizji(Group grupa, Bounds bounds) {
-            group = grupa;
-            grupa.setCollisionBounds(bounds);
-            wKolizji = false;
-    }
-        
-    public void initialize() {
-        wEnter = new WakeupOnCollisionEntry(group);
-        wExit = new WakeupOnCollisionExit(group);
-        wakeupOn(wEnter);
-    }
-    // wypisanie z czym jest kolizja
-    public void processStimulus(Enumeration criteria) {
-        wKolizji = !wKolizji;
-        if (wKolizji) {
-            System.out.println("Kolizja       : " + group.getUserData());
-            wakeupOn(wExit);
-        }
-        else {
-            System.out.println("Nie ma kolizji: "  + group.getUserData());
-            wakeupOn(wEnter);
-        }
-    }
-    
-    public boolean czyKolizja(){
-        if(wKolizji) return true;
-        else return false;
-    }
-    
-}
-    //uniwersalna funkcja zamrożenia ruchu na 20 ms, przydatna przy odtwarzania ruchu nagrywaniem, bądź ustawianiem koordynatów
-    public void czekaj(){
-        try {
-            Thread.sleep(20);
-      } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-      }
-    }
     // dodanie instrukcji 
     public static JPanel dodanieInstrukcji() {
         JLabel label = new JLabel();
@@ -545,49 +491,18 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         panel_instrukcji.add(label);
         return panel_instrukcji;
     } 
-    //muzyka w tle
-    public void muzyka(){
-        try {
-        AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek6.mid").getAbsoluteFile());
-        dziw = AudioSystem.getClip();
-        dziw.open(muzyka);
-        dziw.start();
-        } catch(Exception ex) {
-            System.out.println("Nie można odtworzyć dźwięku");
-            ex.printStackTrace();
-        }
-    }
-    // dźwięk ruchu robota
-    public void dzwiek(){
-        try {
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek2.wav").getAbsoluteFile());
-        clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.start();
-        } catch(Exception ex) {
-            System.out.println("Nie można odtworzyć dźwięku");
-            ex.printStackTrace();
-        }
-    }
-    // kolizja ujednolicona do naszego konkretnego przypadku; sprawdzamy czy kolizja powinna mieć wpływ na ruch
-    public boolean sprawdzanieKolizji(){
-        if(((!chwycona && (kolizja_chwytaka.czyKolizja() && kolizja_kulki.czyKolizja() || kolizja_chwytaka.czyKolizja() && kolizja_podlogi.czyKolizja())) || chwycona && kolizja_podlogi.czyKolizja()) && kat_wychylenia >= 0f){
-            return true;
-        }
-        else return false;
-    }
     
     public void wykonajRuch(){
         
         Transform3D akcja = new Transform3D();
-        // ruchy po kliknienciu danego klawisz
+        //ruchy po kliknienciu danego klawisza
         if (key_a) {
             akcja.rotY(Math.PI / 100); //krok obrotu to 1/100 PI
             kat_obrotu+=Math.PI / 100;
             kat_obrotu%=2*Math.PI;
             przesuniecie_seg2.mul(akcja);
             segment2.setTransform(przesuniecie_seg2);
-            if(sprawdzanieKolizji() && ostatni_klawisz == 'a'){
+            if(sprawdzanieKolizji() && ostatni_klawisz == 'a'){ //jeśli przy wykonywaniu tego ruchu doszło do kolizji, blokujemy ten ruch (ale tylko ten)
                akcja.rotY(-Math.PI / 100);
                kat_obrotu-=Math.PI / 100;
                kat_obrotu%=2*Math.PI;
@@ -821,8 +736,8 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
             }
         }
 
-        //Odtwarzanie nagrania - wracamy do zapamiętanej pozycji początkowej i wykonujemy ruchy zapisane w wektorze. Ponieważ gdy przytrzymujemy przycisk, zapisywany jest on wielokrotnie, nie potrzebujemy mierzyć ruchów, ani czasu
-        //nagranej sekwencji przycisków klawiatury
+        //Odtwarzanie nagrania - wracamy do zapamiętanej pozycji początkowej i wykonujemy ruchy zapisane w wektorze. 
+        //Ponieważ gdy przytrzymujemy przycisk, zapisywany jest on wielokrotnie, nie potrzebujemy mierzyć ruchów, ani czasu ich wykonania
         if (e.getSource() == odtworz_nagranie) {
             nagrywanie = false;
             odtwarzanie = true;
@@ -961,5 +876,48 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         gra_dzwiek = false;  //gdy puścimy przycisk, dźwięk robota ustaje
         clip.stop();
     }
-
+    // kolizja ujednolicona do naszego konkretnego przypadku; sprawdzamy czy kolizja powinna mieć wpływ na ruch
+    public boolean sprawdzanieKolizji(){
+        if(((!chwycona && (kolizja_chwytaka.czyKolizja() && (kolizja_kulki.czyKolizja() || kolizja_podlogi.czyKolizja()))) || chwycona && kolizja_podlogi.czyKolizja()) && kat_wychylenia >= 0f){
+            return true;
+        }
+        else return false;
+    }
+    //uniwersalna funkcja zamrożenia ruchu na 20 ms, przydatna przy odtwarzania ruchu nagrywaniem, bądź ustawianiem koordynatów
+    public void czekaj(){
+        try {
+            Thread.sleep(20);
+      } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+      }
+    }
+    //muzyka w tle
+    public void muzyka(){
+        try {
+        AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek6.mid").getAbsoluteFile());
+        dziw = AudioSystem.getClip();
+        dziw.open(muzyka);
+        dziw.start();
+        } catch(Exception ex) {
+            System.out.println("Nie można odtworzyć dźwięku");
+            ex.printStackTrace();
+        }
+    }
+    // dźwięk ruchu robota
+    public void dzwiek(){
+        try {
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek2.wav").getAbsoluteFile());
+        clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
+        clip.start();
+        } catch(Exception ex) {
+            System.out.println("Nie można odtworzyć dźwięku");
+            ex.printStackTrace();
+        }
+    }
+    public static void main(String args[]){
+        
+      new PolarArm();
+   }
+    
 }
