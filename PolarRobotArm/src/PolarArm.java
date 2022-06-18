@@ -505,16 +505,16 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     //detektor kolizji przyjmujący obiekt i granicę kolizji
     public class detektorKolizji extends Behavior {
 
-    private boolean wKolizji = false;
-    private Group group;
+        private boolean wKolizji = false;
+        private Group group;
 
-    private WakeupOnCollisionEntry wEnter;
-    private WakeupOnCollisionExit wExit;
+        private WakeupOnCollisionEntry wEnter;
+        private WakeupOnCollisionExit wExit;
 
-    public detektorKolizji(Group grupa, Bounds bounds) {
-        group = grupa;
-        grupa.setCollisionBounds(bounds);
-        wKolizji = false;
+        public detektorKolizji(Group grupa, Bounds bounds) {
+            group = grupa;
+            grupa.setCollisionBounds(bounds);
+            wKolizji = false;
     }
     public void initialize() {
         wEnter = new WakeupOnCollisionEntry(group);
@@ -523,7 +523,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
     public void processStimulus(Enumeration criteria) {
         wKolizji = !wKolizji;
-
         if (wKolizji) {
             System.out.println("Kolizja       : " + group.getUserData());
             wakeupOn(wExit);
@@ -767,7 +766,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 if(sprawdzanieKolizji()) break;
             }
             keyReleased(klawisz_Q);
-            while(wysuniecie/0.6*100>celWysuniecia){
+            while(wysuniecie/0.6*100>celWysuniecia+1.67){ //zamieniamy na wartości procentowe
                 keyPressed(klawisz_E);
                 czekaj();
                 if(sprawdzanieKolizji()) break;
