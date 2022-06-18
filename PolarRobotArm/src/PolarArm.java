@@ -69,8 +69,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup segment6 = new TransformGroup();
     TransformGroup ramie_p2 = new TransformGroup();
     
-    
-	
     Transform3D nag_przesuniecie_seg = new Transform3D();  
     Transform3D nag_przesuniecie_seg2 = new Transform3D();
     Transform3D nag_przesuniecie_seg3 = new Transform3D();
@@ -84,9 +82,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
     BranchGroup kulkaBranch = new BranchGroup();
     
-    CollisionDetectorGroup kolizja_kulki;
-    CollisionDetectorGroup kolizja_chwytaka;
-    CollisionDetectorGroup kolizja_podlogi;
+    detektorKolizji kolizja_kulki;
+    detektorKolizji kolizja_chwytaka;
+    detektorKolizji kolizja_podlogi;
     
     KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
     KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
@@ -257,7 +255,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         
 
-        //// tlo
+        // tlo
         float odl_tla = 15f;
         float wys_tla = 10f;
         Appearance wyglad_tla = new Appearance();
@@ -323,7 +321,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         TransformGroup ziemia_trans = new TransformGroup(przesuniecie_ziemi);
         ziemia_trans.addChild(ziemia);
         wezel_scena.addChild(ziemia_trans);
-        kolizja_podlogi = new CollisionDetectorGroup(ziemia_trans,
+        kolizja_podlogi = new detektorKolizji(ziemia_trans,
         new BoundingBox(new Point3d(-ziemia_szer, -0.05f, -ziemia_szer), new Point3d(ziemia_szer, -0.01f, ziemia_szer)));
         kolizja_podlogi.setSchedulingBounds(new BoundingSphere(new Point3d(), 10f));
         wezel_scena.addChild(kolizja_podlogi);
@@ -333,7 +331,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         float podstawa_wys = 0.05f;
         
         //murowana podstawa
-        
         Appearance wyglad_muru = new Appearance();
         Texture tekstura_muru = new TextureLoader("obrazki/murek.gif", this).getTexture();
         wyglad_muru.setTexture(tekstura_muru);
@@ -342,8 +339,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         TransformGroup mur_p = new TransformGroup(przesuniecie_muru);
         Box MurModel = new Box(podstawa_szer, podstawa_wys, podstawa_szer, Box.GENERATE_TEXTURE_COORDS, wyglad_muru);
         
- 
- 
         mur_p.addChild(MurModel);
         
         wezel_scena.addChild(mur_p);
@@ -467,7 +462,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         chwytakTr.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
         chwytakTr.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         
-        kolizja_chwytaka = new CollisionDetectorGroup(chwytakTr,
+        kolizja_chwytaka = new detektorKolizji(chwytakTr,
                 new BoundingSphere(new Point3d(0.0f, 0.0f, 0.1f), 0.03f)); 
         kolizja_chwytaka.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
         chwytakTr.addChild(kolizja_chwytaka);
@@ -493,15 +488,12 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         kulkaBranch.addChild(kulka_p);
         wezel_scena.addChild(kulkaBranch);
         
-        kolizja_kulki = new CollisionDetectorGroup(kulka_p,
+        kolizja_kulki = new detektorKolizji(kulka_p,
                 new BoundingSphere(new Point3d(0.0f, 0f, 0.0f), 0.1f)); 
         kolizja_kulki.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.1f));
         kulka_p.addChild(kolizja_kulki);
         
-        
-
         return wezel_scena;
-
 
     }
 
@@ -511,18 +503,18 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
    }
     //detektor kolizji przyjmujący obiekt i granicę kolizji
-    public class CollisionDetectorGroup extends Behavior {
+    public class detektorKolizji extends Behavior {
 
-    private boolean inCollision = false;
+    private boolean wKolizji = false;
     private Group group;
 
     private WakeupOnCollisionEntry wEnter;
     private WakeupOnCollisionExit wExit;
 
-    public CollisionDetectorGroup(Group group_given, Bounds bounds) {
-        group = group_given;
-        group_given.setCollisionBounds(bounds);
-        inCollision = false;
+    public detektorKolizji(Group grupa, Bounds bounds) {
+        group = grupa;
+        grupa.setCollisionBounds(bounds);
+        wKolizji = false;
     }
     public void initialize() {
         wEnter = new WakeupOnCollisionEntry(group);
@@ -530,9 +522,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         wakeupOn(wEnter);
     }
     public void processStimulus(Enumeration criteria) {
-        inCollision = !inCollision;
+        wKolizji = !wKolizji;
 
-        if (inCollision) {
+        if (wKolizji) {
             System.out.println("Kolizja       : " + group.getUserData());
             wakeupOn(wExit);
         }
@@ -543,7 +535,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
 
     public boolean czyKolizja(){
-        if(inCollision) return true;
+        if(wKolizji) return true;
         else return false;
     }
 
@@ -883,9 +875,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 
             }
             else kulka_p.setTransform(nag_kulka_trans3D); //gdy kulka zaczęła i skończyła nagranie puszczona, jedynie przywracamy jej pozycję
-            
+            System.out.println(nagrane_przyciski.size());
             for (int i = 0; i < nagrane_przyciski.size(); i++) {
-                //w tej pętli realizujemy wciskanie przycisków
+                
                 keyPressed(nagrane_przyciski.elementAt(i));
                 czekaj();
                 if(i == nagrane_przyciski.size()-1 || nagrane_przyciski.elementAt(i+1) != nagrane_przyciski.elementAt(i)){
@@ -893,7 +885,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 } //taka konstrukcja służy działaniu dźwięku, klawisz uznajemy za puszczony, gdy zmienił się na inny, lub skończył się ruch
             }
             odtwarzanie = false;
-            reset_ustawienia.setEnabled(true); //przywracamy działanie przycisku resetowania kulki
+            reset_ustawienia.setEnabled(true);
         }
     }
 
@@ -906,7 +898,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:                
                 key_a = true;
-                if(nagrywanie) nagrane_przyciski.add(klawisz_A); //jeśli nagrywamy, dodajemy przycisk do wektora
+                if(nagrywanie) nagrane_przyciski.add(klawisz_A);
                 break;
             case KeyEvent.VK_D:
                 key_d = true;
@@ -970,7 +962,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 break;
         }
         gra_dzwiek = false;
-        clip.stop(); //gdy puścimy przycisk, dźwięk robota ustaje
+        clip.stop();
     }
 
 }
