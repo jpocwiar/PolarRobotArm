@@ -122,7 +122,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean chwycona = false;
     boolean nag_chwycona = false;
     
-    
     char ostatni_klawisz = '0';
     
     javax.sound.sampled.Clip clip;
@@ -252,8 +251,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
 
         loader = new TextureLoader("obrazki/black.jpg",this);
         image = loader.getImage();
-
-        
 
         // tlo
         float odl_tla = 15f;
@@ -874,7 +871,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 
             }
             else kulka_p.setTransform(nag_kulka_trans3D); //gdy kulka zaczęła i skończyła nagranie puszczona, jedynie przywracamy jej pozycję
-            System.out.println(nagrane_przyciski.size());
+            
             for (int i = 0; i < nagrane_przyciski.size(); i++) {
                 
                 keyPressed(nagrane_przyciski.elementAt(i));
@@ -884,7 +881,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 } //taka konstrukcja służy działaniu dźwięku, klawisz uznajemy za puszczony, gdy zmienił się na inny, lub skończył się ruch
             }
             odtwarzanie = false;
-            reset_ustawienia.setEnabled(true);
+            reset_ustawienia.setEnabled(true); //przywracamy działanie przycisku resetowania kulki
         }
     }
 
@@ -897,7 +894,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A:                
                 key_a = true;
-                if(nagrywanie) nagrane_przyciski.add(klawisz_A);
+                if(nagrywanie) nagrane_przyciski.add(klawisz_A); //jeśli nagrywamy, dodajemy przycisk do wektora
                 break;
             case KeyEvent.VK_D:
                 key_d = true;
@@ -960,7 +957,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 key_k = false;
                 break;
         }
-        gra_dzwiek = false;
+        gra_dzwiek = false;  //gdy puścimy przycisk, dźwięk robota ustaje
         clip.stop();
     }
 
