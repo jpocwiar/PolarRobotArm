@@ -175,7 +175,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     }
     public static JPanel dodanieInstrukcji() {
         JLabel label = new JLabel();
-        label.setIcon(new ImageIcon("src\\instrukcja_robota.jpg"));
+        label.setIcon(new ImageIcon("obrazki\\instrukcja_robota.jpg"));
         JPanel panel_instrukcji = new JPanel(new FlowLayout());
         panel_instrukcji.add(label);
         return panel_instrukcji;
@@ -256,7 +256,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         float odl_tla = 15f;
         float wys_tla = 10f;
         Appearance wyglad_tla = new Appearance();
-        Texture tekstura_tla = new TextureLoader("src/tlo.png", this).getTexture();
+        Texture tekstura_tla = new TextureLoader("obrazki/tlo.png", this).getTexture();
         wyglad_tla.setTexture(tekstura_tla);
         Appearance wyglad_tla_alt = new Appearance();
         Texture tekstura_tla_alt = new TextureLoader("obrazki/hala.png", this).getTexture();
@@ -547,7 +547,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     //muzyka w tle
     public void muzyka(){
         try {
-        AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("src\\dzwiek6.mid").getAbsoluteFile());
+        AudioInputStream muzyka = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek6.mid").getAbsoluteFile());
         dziw = AudioSystem.getClip();
         dziw.open(muzyka);
         dziw.start();
@@ -559,7 +559,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     // dźwięk ruchu robota
     public void dzwiek(){
         try {
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src\\dzwiek2.wav").getAbsoluteFile());
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek2.wav").getAbsoluteFile());
         clip = AudioSystem.getClip();
         clip.open(audioInputStream);
         clip.start();
