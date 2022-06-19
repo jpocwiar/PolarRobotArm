@@ -127,7 +127,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     
     char ostatni_klawisz = '0';
     //dźwięki
-    javax.sound.sampled.Clip clip;
+    javax.sound.sampled.Clip sfx;
     javax.sound.sampled.Clip dziw;
 
     PolarArm(){
@@ -875,7 +875,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 break;
         }
         gra_dzwiek = false;  //gdy puścimy przycisk, dźwięk robota ustaje
-        clip.stop();
+        sfx.stop();
     }
     // kolizja ujednolicona do naszego konkretnego przypadku; sprawdzamy czy kolizja powinna mieć wpływ na ruch
     public boolean sprawdzanieKolizji(){
@@ -908,9 +908,9 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     public void dzwiek(){
         try {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("muzyka\\dzwiek2.wav").getAbsoluteFile());
-        clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.start();
+        sfx = AudioSystem.getClip();
+        sfx.open(audioInputStream);
+        sfx.start();
         } catch(Exception ex) {
             System.out.println("Nie można odtworzyć dźwięku");
             ex.printStackTrace();
