@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.util.Enumeration;
 import java.util.Vector;
 import javax.media.j3d.Transform3D;
 import javax.sound.sampled.AudioInputStream;
@@ -68,7 +67,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     TransformGroup ramie_p1 = new TransformGroup();
     TransformGroup ramie_p2 = new TransformGroup();
     TransformGroup chwytakTr = new TransformGroup();
-    //kula
     Transform3D kulka_trans3D = new Transform3D();
     
     TransformGroup kulka_p = new TransformGroup();
@@ -94,6 +92,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     detektorKolizji kolizja_chwytaka;
     detektorKolizji kolizja_podlogi;
     
+    //klasy przycisków do składowania w wektorze
     KeyEvent klawisz_Q = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_Q, 'Q');
     KeyEvent klawisz_E = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_E, 'E');
     KeyEvent klawisz_A = new KeyEvent(new Button(), 1, 20, 1, KeyEvent.VK_A, 'A');
@@ -127,7 +126,7 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
     boolean nag_chwycona = false;
     
     char ostatni_klawisz = '0';
-    
+    //dźwięki
     javax.sound.sampled.Clip clip;
     javax.sound.sampled.Clip dziw;
 
@@ -404,14 +403,6 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
         Texture tekstura_alum = new TextureLoader("obrazki/alum.jpg", this).getTexture();
         wyglad_alum.setTexture(tekstura_alum);
         
-        segment6.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        segment6.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-        przesuniecie_seg6.set(new Vector3f(0.0f,-0.01f,-0.4f));
-        przesuniecie_seg6.mul(tmp_rot);
-        segment6.setTransform(przesuniecie_seg6);
-        Cylinder walec6 = new Cylinder(0.08f,podstawa_szer-0.09f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_alum);
-        segment6.addChild(walec6);
-        ramie_p1.addChild(segment6);
         
         //aluminiowy walec, wokół którego wykonywany jest obrót głównego ramienia w górę i w dół
         przesuniecie_seg5.set(new Vector3f(0.0f,0.0f,0.0f));
@@ -452,6 +443,16 @@ public class PolarArm extends JFrame implements ActionListener, KeyListener {
                 new BoundingSphere(new Point3d(0.0f, 0.0f, 0.1f), 0.03f)); 
         kolizja_chwytaka.setSchedulingBounds(new BoundingSphere(new Point3d(), 0.2f));
         chwytakTr.addChild(kolizja_chwytaka);
+        
+        //obciążenie z drugiej strony
+        segment6.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        segment6.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        przesuniecie_seg6.set(new Vector3f(0.0f,-0.01f,-0.4f));
+        przesuniecie_seg6.mul(tmp_rot);
+        segment6.setTransform(przesuniecie_seg6);
+        Cylinder walec6 = new Cylinder(0.08f,podstawa_szer-0.09f,Cylinder.GENERATE_NORMALS| Cylinder.GENERATE_TEXTURE_COORDS, wyglad_chwytaka);
+        segment6.addChild(walec6);
+        ramie_p1.addChild(segment6);
 	    
 	/// kulka 
      	Material material_kulki = new Material(new Color3f(0.5f, 0.3f,0.8f), new Color3f(0.1f,0.1f,0.1f),
