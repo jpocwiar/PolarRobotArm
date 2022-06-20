@@ -24,11 +24,11 @@ import java.util.Enumeration;
     public void processStimulus(Enumeration criteria) {
         wKolizji = !wKolizji;
         if (wKolizji) {
-            System.out.println("Kolizja       : " + group.getUserData());
+            //System.out.println("Kolizja     : " + group.getUserData());
             wakeupOn(wExit);
         }
         else {
-            System.out.println("Nie ma kolizji: "  + group.getUserData());
+            //System.out.println("Brak Kolizji: "  + group.getUserData());
             wakeupOn(wEnter);
         }
     }
